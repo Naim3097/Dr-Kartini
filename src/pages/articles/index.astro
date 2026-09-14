@@ -1,0 +1,62 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import { getArticles } from '../../lib/content';
+import { pages } from '../../data/pages';
+import { articleCategories } from '../../data/site';
+import { graph, webPageNode, abs } from '../../lib/schema';
+
+const meta = pages.articles;
+const articles = await getArticles();
+const url = abs(meta.path);
+const usedCats = Object.entries(articleCategories).filter(([k]) => articles.some((a) => a.data.category === k));
+
+const schema = graph([
+  webPageNode({ url, type: 'CollectionPage', name: meta.title, description: meta.description, imageUrl: abs('/og/page/articles.jpg') }),
+  {
+    '@type': 'ItemList',
+    '@id': `${url}#list`,
+    itemListOrder: 'https://schema.org/ItemListOrderDescending',
+    numberOfItems: articles.length,
+    itemListElement: articles.map((a, i) => ({ '@type': 'ListItem', position: i + 1, url: abs(`/articles/${a.id}/`), name: a.data.title })),
+  },
+]);
+---
+<BaseLayout title={meta.title} description={meta.description} path={meta.path} ogImage="/og/page/articles.jpg" schema={schema} crumbs={[{ name: 'Home', path: '/' }, { name: 'Articles', path: meta.path }]}>
+  <header class="page-hero">
+    <div class="container">
+      <h1>Articles</h1>
+      <p class="lead">
+        Skin health articles by Consultant Dermatologist Dr Kartini Farah Rahim, and her writing on animal welfare, the environment and public issues. In English
+        and Bahasa Malaysia.
+      </p>
+      <nav aria-label="Article categories">
+        <ul class="inline-list cats">
+          <li><a href="/articles/" aria-current="page">All</a></li>
+          {usedCats.map(([k, v]) => <li><a href={`/articles/category/${k}/`}>{v.label}</a></li>)}
+        </ul>
+      </nav>
+    </div>
+  </header>
+  <section class="section">
+    <div class="container">
+      <h2 class="visually-hidden">All articles</h2>
+      <div class="grid grid--3">
+        {articles.map((a, i) => <ArticleCard article={a} eager={i < 3} />)}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+<style>
+  .cats {
+    margin-top: 1.25rem;
+    font-weight: 600;
+  }
+  .cats a {
+    color: var(--text-2);
+  }
+  .cats a[aria-current] {
+    color: var(--brand);
+    text-decoration-thickness: 2px;
+  }
+</style>

@@ -1,0 +1,42 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { pages } from '../data/pages';
+import { contact } from '../data/site';
+import { graph, webPageNode, abs, ids } from '../lib/schema';
+
+const meta = pages.privacy;
+const url = abs(meta.path);
+const schema = graph([webPageNode({ url, type: 'WebPage', name: meta.title, description: meta.description, about: { '@id': ids.website } })]);
+---
+<BaseLayout title={meta.title} description={meta.description} path={meta.path} schema={schema} crumbs={[{ name: 'Home', path: '/' }, { name: 'Privacy Policy', path: meta.path }]}>
+  <header class="page-hero">
+    <div class="container--narrow">
+      <h1>Privacy policy</h1>
+      <p class="lead">How personal data is collected and used on DrKartini.net, in line with Malaysia’s Personal Data Protection Act 2010.</p>
+    </div>
+  </header>
+  <section class="section">
+    <div class="container--narrow prose">
+      <h2>What information do we collect?</h2>
+      <ul>
+        <li><strong>Enquiries.</strong> When you use the enquiry form, WhatsApp or email, we receive the details you provide, such as your name, contact details, enquiry type, how you heard about Dr Kartini and your message.</li>
+        <li><strong>Website analytics.</strong> If analytics are enabled, we collect anonymous usage data such as pages visited, device type and approximate location, and events such as clicks on WhatsApp or phone links.</li>
+        <li><strong>Embedded videos.</strong> YouTube videos load only when you press play, using YouTube’s privacy-enhanced mode. YouTube’s own privacy policy then applies.</li>
+      </ul>
+
+      <h2>How do we use it?</h2>
+      <ul>
+        <li>To respond to your enquiry and help arrange appointments.</li>
+        <li>To understand how people find and use the website so that we can improve it.</li>
+      </ul>
+      <p>We do not sell your personal data. Appointment bookings are handled by Avisena Healthcare under its own privacy notice.</p>
+
+      <h2>Please do not send sensitive medical details</h2>
+      <p>Website forms and messaging apps are not suitable for detailed medical information. Your health concerns will be discussed confidentially during your consultation.</p>
+
+      <h2>Your rights</h2>
+      <p>You may ask to access, correct or withdraw consent for the use of your personal data by emailing <a href={`mailto:${contact.email}`}>{contact.email}</a>.</p>
+      <p class="small muted">Last updated 14 September 2026.</p>
+    </div>
+  </section>
+</BaseLayout>

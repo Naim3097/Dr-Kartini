@@ -1,0 +1,306 @@
+---
+import { Image, Picture } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ConditionCard from '../components/ConditionCard.astro';
+import ArticleCard from '../components/ArticleCard.astro';
+import VideoEmbed from '../components/VideoEmbed.astro';
+import Faq from '../components/Faq.astro';
+import { pages } from '../data/pages';
+import { hospitals, registrations, contact, postNominals } from '../data/site';
+import { getConditions, getArticles, videos } from '../lib/content';
+import { graph, webPageNode, faqNode, abs, ids } from '../lib/schema';
+import { whatsappHref } from '../lib/whatsapp';
+
+import heroImg from '../assets/images/portraits/dr-kartini-farah-rahim-dermatologist-shah-alam.jpg';
+import kurungImg from '../assets/images/portraits/dr-kartini-farah-rahim-baju-kurung-stethoscope.jpg';
+import catImg from '../assets/images/animal-welfare/dr-kartini-animal-rescuer-with-cat.jpg';
+import gasingImg from '../assets/images/environment/save-bukit-gasing-community-advocacy.jpg';
+import speakingImg from '../assets/images/media/dr-kartini-speaking-at-health-event.jpg';
+
+const meta = pages.home;
+const url = abs('/');
+const conditions = await getConditions();
+const articles = (await getArticles()).slice(0, 3);
+const featuredVideo = videos.find((v) => v.id === 'ShjNYmzfXlE')!;
+const nsr = registrations.find((r) => r.name.includes('Dermatology'))!;
+
+const faqs = [
+  {
+    q: 'Who is Dr Kartini Farah Rahim?',
+    a: 'Dr Kartini Farah Rahim is a Consultant Dermatologist in Shah Alam, Selangor, registered on Malaysia’s National Specialist Register (No. 128619). She trained in the UK and at Universiti Kebangsaan Malaysia, taught medicine and dermatology at Universiti Putra Malaysia for more than ten years, and is active in animal welfare and environmental work.',
+  },
+  {
+    q: 'Where does Dr Kartini practise?',
+    a: 'Dr Kartini sees patients at Avisena Specialist Hospital (No. 4, Jalan Ikhtisas, Seksyen 14) and Avisena Women’s & Children’s Specialist Hospital (No. 3, Jalan Perdagangan 14/4, Seksyen 14), both in Shah Alam, Selangor.',
+  },
+  {
+    q: 'What skin conditions does Dr Kartini treat?',
+    a: 'Her clinical focus includes eczema (atopic dermatitis), psoriasis, acne, skin infections, allergic skin reactions and blistering disorders, in both adults and children. She is also a medical advisor to patient support groups for hidradenitis suppurativa and ichthyosis in Malaysia.',
+  },
+  {
+    q: 'How do I book an appointment with Dr Kartini?',
+    a: `WhatsApp Dr Kartini on ${contact.whatsappDisplay} to check her latest schedule, then book through Avisena’s appointment line on ${contact.appointmentsDisplay}. Her clinic sessions are listed on the appointments page.`,
+  },
+  {
+    q: 'Does Dr Kartini see children?',
+    a: 'Yes. Dr Kartini sees babies, children and teenagers with skin conditions such as eczema, and practises at Avisena Women’s & Children’s Specialist Hospital as well as Avisena Specialist Hospital.',
+  },
+];
+
+const schema = graph([
+  webPageNode({
+    url,
+    type: 'WebPage',
+    name: meta.title,
+    description: meta.description,
+    imageUrl: abs('/og/page/home.jpg'),
+    about: { '@id': ids.person },
+    mainEntity: { '@id': ids.physician },
+    speakable: ['#about-text'],
+    hasBreadcrumb: false,
+  }),
+  faqNode(url, faqs),
+]);
+
+const community = [
+  {
+    href: '/animal-welfare/',
+    title: 'Animal welfare',
+    img: catImg,
+    alt: 'Dr Kartini holding a rescued cat',
+    text: 'Board member of Filbert’s Foundation for Furry Friends. Rescues cats and dogs and supports neutering and vaccination programmes for strays.',
+  },
+  {
+    href: '/community/environment/',
+    title: 'Environment',
+    img: gasingImg,
+    alt: 'Community members calling for the protection of Bukit Gasing forest',
+    text: 'Vice-President of PEKA Malaysia. Writes and speaks on plastic waste, recycling and the protection of urban forests.',
+  },
+  {
+    href: '/community/empowerment-sentuhan/',
+    title: 'Empowerment Sentuhan',
+    img: speakingImg,
+    alt: 'Dr Kartini speaking at a health education event',
+    text: 'Skin health talks and education for women, parents and children, in English and Bahasa Malaysia.',
+  },
+];
+---
+<BaseLayout title={meta.title} description={meta.description} path="/" ogImage="/og/page/home.jpg" schema={schema} ogType="profile">
+  <section class="hero">
+    <div class="container hero__grid">
+      <div class="hero__text">
+        <p class="hero__role">Consultant Dermatologist, Shah Alam</p>
+        <h1>Dr Kartini Farah Rahim</h1>
+        <p class="lead">
+          Dr Kartini treats adults and children with eczema, psoriasis, acne and other skin, hair and nail conditions at Avisena Specialist Hospital and Avisena
+          Women’s &amp; Children’s Specialist Hospital.
+        </p>
+        <div class="btn-row">
+          <a class="btn" href="/appointments/" data-track="appointment_cta">Book an appointment</a>
+          <a class="btn btn--secondary" href={whatsappHref('/')} target="_blank" rel="noopener" data-track="whatsapp_click">WhatsApp {contact.whatsappDisplay}</a>
+        </div>
+        <p class="hero__creds">{postNominals}<br />National Specialist Register No. {nsr.value}</p>
+      </div>
+      <div class="photo photo--portrait hero__photo">
+        <Picture
+          src={heroImg}
+          formats={['avif', 'webp']}
+          alt="Dr Kartini Farah Rahim, Consultant Dermatologist, at her desk"
+          widths={[420, 640, 864]}
+          sizes="(min-width: 900px) 420px, 90vw"
+          loading="eager"
+          fetchpriority="high"
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt" aria-labelledby="about-title">
+    <div class="container split split--center">
+      <div>
+        <h2 id="about-title">About Dr Kartini</h2>
+        <div id="about-text">
+          <p>
+            Dr Kartini Farah Rahim is a Malaysian Consultant Dermatologist on the National Specialist Register. She began working in dermatology in 2004 as a
+            research fellow in Dundee, Scotland. She holds MRCP (UK), a Diploma in Dermatology from Glasgow and an Advanced Master of Dermatology from UKM, and is
+            a Fellow of the Asian Academy of Dermatology and Venereology.
+          </p>
+          <p>
+            She worked at Hospital Kuala Lumpur and Hospital Serdang, and taught medicine and dermatology at Universiti Putra Malaysia for more than ten years.
+            She is Vice-President of PEKA Malaysia, a board member of Filbert’s Foundation for Furry Friends, and a medical advisor to patient support groups for
+            eczema, hidradenitis suppurativa and ichthyosis.
+          </p>
+        </div>
+        <p><a class="text-link" href="/about-dr-kartini/">Read more about Dr Kartini</a></p>
+      </div>
+      <div class="photo photo--portrait about__photo">
+        <Image src={kurungImg} alt="Dr Kartini Farah Rahim in a blue baju kurung with a stethoscope" widths={[400, 640]} sizes="(min-width: 900px) 380px, 90vw" />
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="conditions-title">
+    <div class="container">
+      <div class="section-head">
+        <h2 id="conditions-title">Conditions treated</h2>
+        <p class="muted">Patient guides written for Malaysian families and reviewed by Dr Kartini.</p>
+      </div>
+      <div class="grid grid--3">
+        {conditions.map((c) => <ConditionCard condition={c} />)}
+      </div>
+      <p class="section-foot"><a class="text-link" href="/dermatologist-malaysia/">What does a consultant dermatologist do?</a></p>
+    </div>
+  </section>
+
+  <section class="section section--alt" aria-labelledby="clinics-title">
+    <div class="container">
+      <div class="section-head">
+        <h2 id="clinics-title">Clinics and hours</h2>
+        <p class="muted">Sessions change on public holidays and during leave. Please WhatsApp {contact.whatsappDisplay} before visiting.</p>
+      </div>
+      <div class="grid grid--2">
+        {
+          hospitals.map((h) => (
+            <div class="card">
+              <h3>{h.name}</h3>
+              <p class="muted">
+                {h.streetAddress}, {h.postalCode} {h.locality}
+              </p>
+              <table class="hours">
+                <caption class="visually-hidden">Dr Kartini’s clinic sessions at {h.name}</caption>
+                <tbody>
+                  {h.sessions.map((s) => (
+                    <tr>
+                      <th scope="row">{s.day}</th>
+                      <td>
+                        {s.hours}
+                        {s.note && <span class="muted"> ({s.note})</span>}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <p class="card__meta">
+                <a href={h.mapUrl} target="_blank" rel="noopener">Directions</a>
+              </p>
+            </div>
+          ))
+        }
+      </div>
+      <p class="section-foot">
+        Appointments: <a href={`tel:${contact.appointmentsE164}`} data-track="phone_click">{contact.appointmentsDisplay}</a>
+      </p>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="community-title">
+    <div class="container">
+      <div class="section-head">
+        <h2 id="community-title">Outside the clinic</h2>
+        <p class="muted">Dr Kartini volunteers with animal welfare and environmental groups, and gives skin health talks to the public.</p>
+      </div>
+      <div class="grid grid--3">
+        {
+          community.map((c) => (
+            <article class="card card--link">
+              <div class="card__media">
+                <Image src={c.img} alt={c.alt} width={640} height={400} fit="cover" />
+              </div>
+              <h3>
+                <a class="stretched" href={c.href}>{c.title}</a>
+              </h3>
+              <p class="muted">{c.text}</p>
+            </article>
+          ))
+        }
+      </div>
+      <p class="section-foot"><a class="text-link" href="/beyond-skin/">Read Dr Kartini’s story</a></p>
+    </div>
+  </section>
+
+  <section class="section section--alt" aria-labelledby="media-title">
+    <div class="container split split--even split--center">
+      <div>
+        <h2 id="media-title">Media and videos</h2>
+        <p>
+          Dr Kartini has discussed skin health on TV3’s Helo Doktor, RTM’s Bicara DR and Sky TV, and has been interviewed or published in The Star, Harian
+          Metro, Utusan Malaysia, Selangor Journal, Free Malaysia Today and Malaysiakini.
+        </p>
+        <p class="btn-row">
+          <a class="btn btn--secondary" href="/media/">Media coverage</a>
+          <a class="btn btn--secondary" href="/videos/">All videos</a>
+        </p>
+        <p class="small muted">Journalists: see the <a href="/press/">press page</a> for biographies and photos.</p>
+      </div>
+      <figure>
+        <VideoEmbed id={featuredVideo.id} title={featuredVideo.title} />
+        <figcaption><a href={`/videos/${featuredVideo.slug}/`}>{featuredVideo.title}</a></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="articles-title">
+    <div class="container">
+      <div class="section-head">
+        <h2 id="articles-title">Recent articles</h2>
+      </div>
+      <div class="grid grid--3">
+        {articles.map((a) => <ArticleCard article={a} />)}
+      </div>
+      <p class="section-foot"><a class="text-link" href="/articles/">All articles</a></p>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container--narrow">
+      <Faq faqs={faqs} heading="Common questions" />
+      <p class="section-foot"><a class="text-link" href="/faq/">More questions and answers</a></p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero {
+    padding-block: clamp(2.5rem, 6vw, 4.5rem);
+  }
+  .hero__grid {
+    display: grid;
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: center;
+  }
+  @media (min-width: 900px) {
+    .hero__grid {
+      grid-template-columns: 1fr 420px;
+    }
+  }
+  .hero__role {
+    margin-bottom: 0.5rem;
+    color: var(--brand);
+    font-weight: 600;
+  }
+  .hero h1 {
+    font-size: clamp(2.25rem, 1.6rem + 2.6vw, 3.25rem);
+    margin-bottom: 1rem;
+  }
+  .hero .btn-row {
+    margin-top: 1.75rem;
+  }
+  .hero__creds {
+    margin: 1.75rem 0 0;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--border);
+    color: var(--text-3);
+    font-size: 0.9375rem;
+  }
+  .hero__photo {
+    max-width: 420px;
+    width: 100%;
+    justify-self: center;
+  }
+  .about__photo {
+    max-width: 380px;
+    width: 100%;
+    justify-self: center;
+  }
+</style>

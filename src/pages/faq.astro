@@ -1,0 +1,99 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Faq from '../components/Faq.astro';
+import { pages } from '../data/pages';
+import { contact, registrations, hospitals } from '../data/site';
+import { graph, webPageNode, abs, ids } from '../lib/schema';
+
+const meta = pages.faq;
+const url = abs(meta.path);
+const nsr = registrations.find((r) => r.name.includes('Dermatology'))!;
+const mmc = registrations.find((r) => r.name.startsWith('Malaysian Medical'))!;
+
+const groups = [
+  {
+    id: 'about',
+    title: 'About Dr Kartini',
+    faqs: [
+      { q: 'Who is Dr Kartini Farah Rahim?', a: 'Dr Kartini Farah Rahim is a Malaysian Consultant Dermatologist practising at Avisena Specialist Hospital and Avisena Women’s & Children’s Specialist Hospital in Shah Alam, Selangor. She was a Senior Lecturer in Medicine and Dermatology at Universiti Putra Malaysia for more than ten years, and is known for her advocacy for animal welfare, the environment and women’s and children’s wellbeing.' },
+      { q: 'Is Dr Kartini Farah Rahim the same person as Dr Kartini Farah Abdul Rahim?', a: 'Yes. Dr Kartini Farah Rahim is also published as Dr Kartini Farah Abdul Rahim, Dr Kartini Farah Abd Rahim and Dr Kartini Rahim. She prefers to be known simply as Dr Kartini.' },
+      { q: 'What are Dr Kartini’s qualifications?', a: 'MBBCh BAO (University College Dublin), Diploma in Dermatology (Royal College of Physicians and Surgeons of Glasgow), MRCP (UK), Advanced Master of Dermatology (Universiti Kebangsaan Malaysia) and Fellow of the Asian Academy of Dermatology and Venereology (FAADV).' },
+      { q: 'Is Dr Kartini a registered specialist in Malaysia?', a: `Yes. She is registered with the Malaysian Medical Council (No. ${mmc.value}) and on the National Specialist Register (No. ${nsr.value}) in dermatology and internal medicine.` },
+      { q: 'Where did Dr Kartini train?', a: 'Dr Kartini studied medicine at University College Dublin, began dermatology as a research fellow in Dundee, Scotland in 2004, and trained in the United Kingdom before completing her Advanced Master of Dermatology at UKM. She served at Hospital Kuala Lumpur and Hospital Serdang.' },
+    ],
+  },
+  {
+    id: 'appointments',
+    title: 'Appointments and clinics',
+    faqs: [
+      { q: 'Where does Dr Kartini practise?', a: `At ${hospitals[0].name} (${hospitals[0].streetAddress}, ${hospitals[0].postalCode} ${hospitals[0].locality}) and ${hospitals[1].name} (${hospitals[1].streetAddress}, ${hospitals[1].postalCode} ${hospitals[1].locality}).` },
+      { q: 'How do I book an appointment?', a: `WhatsApp Dr Kartini on ${contact.whatsappDisplay} to confirm her schedule, then book with Avisena on ${contact.appointmentsDisplay}. Full clinic sessions are on the appointments page.` },
+      { q: 'What languages does Dr Kartini speak?', a: 'Consultations are available in English and Bahasa Malaysia.' },
+      { q: 'Does Dr Kartini treat children?', a: 'Yes. Dr Kartini sees babies, children and teenagers, and holds sessions at Avisena Women’s & Children’s Specialist Hospital as well as Avisena Specialist Hospital.' },
+      { q: 'How much does a consultation cost?', a: 'Fees at private hospitals in Malaysia follow the regulated fee schedule, and total costs depend on any tests, procedures or medicines required. Please contact Avisena directly for current charges and insurance or panel arrangements.' },
+    ],
+  },
+  {
+    id: 'dermatology',
+    title: 'Dermatology',
+    faqs: [
+      { q: 'What conditions does Dr Kartini treat?', a: 'Her clinical focus includes eczema (atopic dermatitis), psoriasis, acne, skin infections, allergic skin reactions, blistering disorders and children’s skin conditions. She is also a medical advisor to patient support groups for hidradenitis suppurativa and ichthyosis.' },
+      { q: 'Does Dr Kartini offer cosmetic or aesthetic treatments?', a: 'Dr Kartini’s practice focuses on medical dermatology: diagnosing and treating skin, hair and nail disease. Please ask her team about specific procedures before booking.' },
+      { q: 'Can Dr Kartini give medical advice over WhatsApp?', a: 'WhatsApp is for appointments and non-urgent enquiries. Diagnosis and treatment require a consultation. For emergencies, go to the nearest emergency department or call 999.' },
+    ],
+  },
+  {
+    id: 'advocacy',
+    title: 'Community work and media',
+    faqs: [
+      { q: 'What is Dr Kartini’s role in animal welfare?', a: 'Dr Kartini is a board member of Filbert’s Foundation for Furry Friends and an active rescuer of cats and dogs. She advocates for humane stray animal management through neutering, vaccination, rehoming and community education.' },
+      { q: 'What is Dr Kartini’s role at PEKA?', a: 'Dr Kartini is Vice-President of Pertubuhan Pelindung Khazanah Alam Malaysia (PEKA), an NGO that protects Malaysia’s natural heritage. She speaks and writes on plastic pollution, waste separation and conservation.' },
+      { q: 'What is Empowerment Sentuhan?', a: 'Empowerment Sentuhan is Dr Kartini’s skin health education programme for women, parents and children.' },
+      { q: 'How can journalists reach Dr Kartini?', a: `Email ${contact.email} or WhatsApp ${contact.whatsappDisplay} with your outlet, deadline and question. The press page has approved biographies and headshots.` },
+    ],
+  },
+];
+
+const all = groups.flatMap((g) => g.faqs);
+const schema = graph([
+  webPageNode({ url, type: 'FAQPage', name: meta.title, description: meta.description, imageUrl: abs('/og/page/faq.jpg'), about: { '@id': ids.person } }),
+  {
+    '@type': 'FAQPage',
+    '@id': `${url}#faq`,
+    mainEntity: all.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+  },
+]);
+// Two FAQPage nodes would duplicate; merge webpage + faq into one node.
+const graphNodes = schema['@graph'] as any[];
+const faqIdx = graphNodes.findIndex((n) => n['@id'] === `${url}#faq`);
+const pageIdx = graphNodes.findIndex((n) => n['@id'] === `${url}#webpage`);
+graphNodes[pageIdx] = { ...graphNodes[pageIdx], mainEntity: graphNodes[faqIdx].mainEntity };
+graphNodes.splice(faqIdx, 1);
+---
+<BaseLayout title={meta.title} description={meta.description} path={meta.path} ogImage="/og/page/faq.jpg" schema={schema} crumbs={[{ name: 'Home', path: '/' }, { name: 'FAQ', path: meta.path }]}>
+  <header class="page-hero">
+    <div class="container">
+      <h1>Frequently asked questions</h1>
+      <p class="lead">Answers about Dr Kartini Farah Rahim’s qualifications, clinics, appointments, the conditions she treats and her work outside the clinic.</p>
+      <nav aria-label="FAQ sections">
+        <ul class="inline-list faq-nav">
+          {groups.map((g) => <li><a href={`#${g.id}-title`}>{g.title}</a></li>)}
+        </ul>
+      </nav>
+    </div>
+  </header>
+  <section class="section">
+    <div class="container--narrow faq-groups">
+      {groups.map((g) => <Faq faqs={g.faqs} heading={g.title} id={g.id} />)}
+    </div>
+  </section>
+</BaseLayout>
+<style>
+  .faq-nav {
+    margin-top: 1.25rem;
+    font-weight: 600;
+  }
+  .faq-groups > :global(section + section) {
+    margin-top: 3rem;
+  }
+</style>

@@ -1,0 +1,326 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Faq from '../components/Faq.astro';
+import ArticleCard from '../components/ArticleCard.astro';
+import VideoCard from '../components/VideoCard.astro';
+import { pages } from '../data/pages';
+import { clippings } from '../data/media';
+import { contact } from '../data/site';
+import { getArticles, videos } from '../lib/content';
+import { graph, webPageNode, faqNode, abs, ids } from '../lib/schema';
+
+import catImg from '../assets/images/animal-welfare/dr-kartini-animal-rescuer-with-cat.jpg';
+import dogImg from '../assets/images/animal-welfare/dr-kartini-with-rescued-dog.jpg';
+import f3Img from '../assets/images/animal-welfare/f3-targeted-spay-project-presentation.jpg';
+import dbklImg from '../assets/images/animal-welfare/dbkl-stray-animal-welfare-meeting.jpg';
+import kopiImg from '../assets/images/animal-welfare/justice-for-kopi-dr-kartini.jpg';
+import mochiImg from '../assets/images/animal-welfare/mochi-rescued-kitten-shah-alam.jpg';
+import farmImg from '../assets/images/animal-welfare/dr-kartini-dogs-international-dog-day.jpg';
+
+const clipImages = import.meta.glob<{ default: ImageMetadata }>('../assets/images/clippings/*.jpg', { eager: true });
+const clipImg = (file: string) => clipImages[`../assets/images/clippings/${file}`]?.default;
+
+const meta = pages.animalWelfare;
+const url = abs(meta.path);
+const articles = (await getArticles()).filter((a) => a.data.category === 'animal-welfare' || (a.data.category === 'press-statements' && a.data.tags.some((t) => /haiwan|animal/i.test(t))));
+const animalVideos = videos.filter((v) => v.category === 'animal-welfare');
+const animalClips = clippings.filter((c) => c.topic === 'animal-welfare');
+const adoptHref = `${contact.whatsappLink}?text=${encodeURIComponent('Hello Dr Kartini, I am interested in adopting a rescued animal. (Sent from drkartini.net/animal-welfare/)')}`;
+
+const milestones = [
+  { date: '13 Mar 2024', title: 'Letter in The Star: “Lift the ban on feeding of strays”', text: 'Writing as an F3 board member, she asked a local council to reverse a ban on feeding stray animals and pointed to neutering and vaccination instead.' },
+  { date: '16 Dec 2024', title: 'Press conference on the Kopi suit', text: 'She was one of four plaintiffs in a case arguing that the shooting of Kopi, a stray dog in Besut, Terengganu, broke the Animal Welfare Act 2015.' },
+  { date: '24 Feb 2025', title: 'Memorandum to Parliament', text: 'A coalition of animal welfare NGOs submitted proposals for amendments to animal protection law under the banner “Justice for Kopi and all stray animals”.' },
+  { date: 'May 2025', title: 'The spray-painted monkey case', text: 'As PEKA Vice-President, she asked the authorities to account for a caged monkey filmed being spray-painted, and explained how paint chemicals harm an animal’s skin.' },
+  { date: '18 Aug 2025', title: 'Open letter to the Yang di-Pertuan Agong', text: 'She asked that the national anti-bullying campaign also cover cruelty to cats, dogs and monkeys.' },
+  { date: 'Aug 2025', title: 'TV3 news segment on stray animals', text: 'She appeared in a TV3 report on stray animals and the people who feed and care for them.' },
+  { date: '26 Aug 2025', title: 'Meeting with DBKL', text: 'She joined animal welfare groups and Kuala Lumpur City Hall’s Health and Environment Department to discuss a TNRVM programme for stray dogs.' },
+];
+
+const approach = [
+  { title: 'Neuter and vaccinate', text: 'Trap humanely, neuter, vaccinate, then return, rehome or rehabilitate, and keep managing the area. Neutering stops numbers growing and vaccination protects against rabies.' },
+  { title: 'Avoid the vacuum effect', text: 'Removing or killing strays does not reduce numbers for long. New animals move into an emptied area and breed quickly.' },
+  { title: 'Work with the community', text: 'Returning neutered animals works best when residents understand responsible feeding, waste management and how to behave around dogs.' },
+  { title: 'Rehome where possible', text: 'Adoption is the best outcome. Aggressive dogs should go to shelters for rehabilitation, with humane euthanasia only as a last resort.' },
+];
+
+const faqs = [
+  {
+    q: 'Is Dr Kartini involved in animal welfare?',
+    a: 'Yes. Alongside her work as a Consultant Dermatologist, Dr Kartini Farah Rahim is a board member of Filbert’s Foundation for Furry Friends (F3), rescues cats and dogs, and speaks publicly about humane stray animal management, adoption and responsible pet ownership in Malaysia.',
+  },
+  {
+    q: 'What is TNRVM?',
+    a: 'TNRVM stands for Trap, Neuter, Vaccinate, Release, Rehome or Rehabilitate, and Manage. Stray animals are caught humanely, neutered or spayed and vaccinated against diseases such as rabies, then returned, rehomed or rehabilitated, with ongoing management and community education so that numbers fall over time.',
+  },
+  {
+    q: 'Why doesn’t culling solve Malaysia’s stray dog problem?',
+    a: 'As Dr Kartini explained to Kuala Lumpur City Hall, removing or killing strays does not reduce numbers in the long run. Stray animals breed quickly, and when an area is emptied, new animals move in. This is known as the vacuum effect. Neutering, vaccination, rehoming and education deal with the cause.',
+  },
+  {
+    q: 'How does Dr Kartini balance animal welfare and public safety?',
+    a: 'Dr Kartini supports approaches that protect both people and animals: neutering and vaccination, community education, and moving aggressive dogs to shelters for rehabilitation. With Dr Ima she has also made a video series on reading dog body language and reducing the risk of dog bites.',
+  },
+  {
+    q: 'How can I adopt a rescued animal from Dr Kartini?',
+    a: `Rescued animals looking for homes are featured in Dr Kartini’s articles. If you are ready for a lifelong commitment, WhatsApp ${contact.whatsappDisplay} to ask which animals are available.`,
+  },
+  {
+    q: 'Can journalists contact Dr Kartini about stray animal issues?',
+    a: 'Yes. Dr Kartini can comment on stray animal management, the Animal Welfare Act 2015, neutering programmes, dog bite prevention and responsible pet ownership, in English and Bahasa Malaysia. Contact details are on the press page.',
+  },
+];
+
+const schema = graph([
+  webPageNode({
+    url,
+    type: 'WebPage',
+    name: meta.title,
+    description: meta.description,
+    imageUrl: abs('/og/page/animalWelfare.jpg'),
+    about: [{ '@id': ids.person }, { '@type': 'Thing', name: 'Animal welfare in Malaysia', sameAs: 'https://en.wikipedia.org/wiki/Animal_welfare' }],
+    speakable: ['#aw-summary'],
+  }),
+  faqNode(url, faqs),
+]);
+---
+<BaseLayout title={meta.title} description={meta.description} path={meta.path} ogImage="/og/page/animalWelfare.jpg" schema={schema} crumbs={[{ name: 'Home', path: '/' }, { name: 'Animal welfare', path: meta.path }]} preconnectYouTube>
+  <header class="page-hero">
+    <div class="container split split--center">
+      <div>
+        <h1>Dr Kartini &amp; Animal Welfare: Compassion Beyond the Clinic</h1>
+        <p class="lead" id="aw-summary">
+          Dr Kartini Farah Rahim rescues cats and dogs and sits on the board of Filbert’s Foundation for Furry Friends. She supports neutering, vaccination,
+          rehoming and community education as the long-term way to manage Malaysia’s stray animals.
+        </p>
+        <div class="btn-row">
+          <a class="btn" href={adoptHref} target="_blank" rel="noopener" data-track="adoption_whatsapp">Ask about adoption</a>
+          <a class="btn btn--secondary" href="/press/">Media enquiries</a>
+        </div>
+      </div>
+      <div class="photo photo--portrait hero-photo">
+        <Image src={catImg} alt="Dr Kartini Farah Rahim holding a rescued one-eyed cat" widths={[420, 800]} sizes="(min-width: 900px) 400px, 85vw" loading="eager" fetchpriority="high" />
+      </div>
+    </div>
+  </header>
+
+  <section class="section">
+    <div class="container split">
+      <div class="prose">
+        <h2>Why a dermatologist rescues animals</h2>
+        <p>
+          Dr Kartini takes in abandoned cats and dogs, looks for homes for them, and encourages people to adopt rather than buy.
+        </p>
+        <p>
+          She also speaks about how councils and communities treat strays. Her view is that cruelty and mass removal do not solve the problem, and that humane
+          programmes do.
+        </p>
+      </div>
+      <div class="pair">
+        <div class="photo photo--portrait"><Image src={dogImg} alt="Dr Kartini crouching beside a rescued dog" width={480} height={600} fit="cover" /></div>
+        <div class="photo photo--portrait"><Image src={mochiImg} alt="Mochi, a kitten Dr Kartini rescued from a busy street in Shah Alam" width={480} height={600} fit="cover" /></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt" id="approach" aria-labelledby="approach-title">
+    <div class="container">
+      <div class="section-head">
+        <h2 id="approach-title">How should Malaysia manage stray animals?</h2>
+        <p class="muted">Dr Kartini argues for methods that keep people safe and reduce stray numbers over time.</p>
+      </div>
+      <ol class="approach">
+        {
+          approach.map((a) => (
+            <li>
+              <h3>{a.title}</h3>
+              <p>{a.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+      <div class="grid grid--2 figures">
+        <figure>
+          <div class="photo photo--landscape"><Image src={f3Img} alt="Filbert's Foundation for Furry Friends presenting a targeted long-term spay project to local authority officers" widths={[600, 1000]} sizes="(min-width: 900px) 540px, 90vw" /></div>
+          <figcaption>Filbert’s Foundation for Furry Friends presenting a long-term spay and neuter project to local authority officers.</figcaption>
+        </figure>
+        <figure>
+          <div class="photo photo--landscape"><Image src={dbklImg} alt="Dr Kartini with Dr Nor Halizam Ismail and officers of DBKL's Health and Environment Department" widths={[600, 1000]} sizes="(min-width: 900px) 540px, 90vw" /></div>
+          <figcaption>With Dr Nor Halizam Ismail and DBKL Health and Environment Department officers, 26 August 2025.</figcaption>
+        </figure>
+      </div>
+      <p><a href="/articles/bersama-sama-dbkl-menerajui-program-terbaik-untuk-membawa-kesejahteraan-kepada-haiwan-jalanan/">Dr Kartini’s account of the DBKL meeting (Bahasa Malaysia)</a></p>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="work-title">
+    <div class="container split">
+      <div>
+        <h2 id="work-title">Advocacy work</h2>
+        <ol class="year-list">
+          {
+            milestones.map((m) => (
+              <li>
+                <span class="year">{m.date}</span>
+                <div>
+                  <h3>{m.title}</h3>
+                  <p>{m.text}</p>
+                </div>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+      <figure class="kopi">
+        <div class="photo"><Image src={kopiImg} alt="Dr Kartini holding a Justice for Kopi placard outside the Kuala Lumpur court complex" widths={[360, 720]} sizes="(min-width: 900px) 360px, 80vw" /></div>
+        <figcaption>Outside the Kuala Lumpur court complex.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="section section--alt" aria-labelledby="videos-title">
+    <div class="container">
+      <div class="section-head">
+        <h2 id="videos-title">Videos on living safely with dogs</h2>
+        <p class="muted">Bahasa Malaysia episodes with Dr Ima on dog body language, approaching dogs and preventing bites, plus a TV3 report on stray animals.</p>
+      </div>
+      <div class="grid grid--3">
+        {animalVideos.map((v) => <VideoCard video={v} />)}
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="press-title">
+    <div class="container">
+      <h2 id="press-title">In the news</h2>
+      <ul class="clips">
+        {
+          animalClips.map((c) => (
+            <li>
+              {clipImg(c.image) && (
+                <div class="clips__img">
+                  <Image src={clipImg(c.image)!} alt={`Newspaper clipping: ${c.title}`} width={180} height={220} fit="cover" position="top" />
+                </div>
+              )}
+              <div>
+                <p class="card__label">{[c.outlet, c.date && new Date(c.date).toLocaleDateString('en-MY', { day: 'numeric', month: 'long', year: 'numeric' })].filter(Boolean).join(', ')}</p>
+                <h3>{c.isHeadline ? `“${c.title}”` : c.title}</h3>
+                <p>{c.summary}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  {
+    articles.length > 0 && (
+      <section class="section section--alt" aria-labelledby="stories-title">
+        <div class="container">
+          <h2 id="stories-title">Articles</h2>
+          <div class="grid grid--3">
+            {articles.map((a) => (
+              <ArticleCard article={a} />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="section">
+    <div class="container split split--even split--center">
+      <div class="photo photo--landscape"><Image src={farmImg} alt="Friendly dogs greeting Dr Kartini on a farm visit" widths={[600, 1080]} sizes="(min-width: 900px) 540px, 90vw" /></div>
+      <div>
+        <h2>Adopting a rescued animal</h2>
+        <p>Adoption is a commitment for the animal’s whole life. If you can offer a safe home, ask which cats and dogs are currently looking for families.</p>
+        <p><a class="btn" href={adoptHref} target="_blank" rel="noopener" data-track="adoption_whatsapp">Ask about adoption on WhatsApp</a></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container--narrow">
+      <Faq faqs={faqs} heading="Questions about Dr Kartini’s animal welfare work" />
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero-photo {
+    max-width: 400px;
+    width: 100%;
+    justify-self: center;
+  }
+  .pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+  .approach {
+    display: grid;
+    gap: 1.5rem 2.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 26rem), 1fr));
+    list-style: none;
+    counter-reset: step;
+    margin: 0 0 2.5rem;
+    padding: 0;
+  }
+  .approach li {
+    counter-increment: step;
+    padding-top: 1rem;
+    border-top: 2px solid var(--brand);
+  }
+  .approach h3 {
+    font-size: 1.125rem;
+    margin-bottom: 0.35rem;
+  }
+  .approach h3::before {
+    content: counter(step) '. ';
+    color: var(--brand);
+  }
+  .approach p {
+    margin: 0;
+    color: var(--text-2);
+  }
+  .figures {
+    margin-bottom: 1.5rem;
+  }
+  .kopi {
+    max-width: 360px;
+    width: 100%;
+    justify-self: center;
+  }
+  .kopi .photo {
+    aspect-ratio: 9 / 14;
+  }
+  .clips {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--border);
+  }
+  .clips li {
+    display: flex;
+    gap: 1.25rem;
+    padding: 1.25rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .clips__img {
+    flex: none;
+    width: 90px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .clips h3 {
+    font-size: 1.125rem;
+    margin-bottom: 0.3rem;
+  }
+  .clips p:last-child {
+    margin: 0;
+    color: var(--text-2);
+  }
+</style>

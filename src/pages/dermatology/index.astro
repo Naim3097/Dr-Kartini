@@ -1,0 +1,77 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ConditionCard from '../../components/ConditionCard.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { pages } from '../../data/pages';
+import { getConditions, getArticles } from '../../lib/content';
+import { graph, webPageNode, abs } from '../../lib/schema';
+
+const meta = pages.dermatology;
+const url = abs(meta.path);
+const conditions = await getConditions();
+const articles = (await getArticles()).filter((a) => a.data.category === 'dermatology').slice(0, 3);
+
+const schema = graph([
+  webPageNode({
+    url,
+    type: ['CollectionPage', 'MedicalWebPage'],
+    name: meta.title,
+    description: meta.description,
+    imageUrl: abs('/og/page/dermatology.jpg'),
+    about: { '@type': 'MedicalSpecialty', '@id': 'https://schema.org/Dermatology', name: 'Dermatology' },
+    medicalAudience: true,
+    reviewed: true,
+  }),
+  {
+    '@type': 'ItemList',
+    '@id': `${url}#conditions`,
+    name: 'Skin conditions treated by Dr Kartini Farah Rahim',
+    numberOfItems: conditions.length,
+    itemListElement: conditions.map((c, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      url: abs(`/dermatology/${c.id}/`),
+      name: c.data.title,
+    })),
+  },
+]);
+---
+<BaseLayout title={meta.title} description={meta.description} path={meta.path} ogImage="/og/page/dermatology.jpg" schema={schema} crumbs={[{ name: 'Home', path: '/' }, { name: 'Dermatology', path: meta.path }]}>
+  <header class="page-hero">
+    <div class="container">
+      <h1>Conditions treated</h1>
+      <p class="lead">
+        Guides to the skin, hair and nail conditions Dr Kartini Farah Rahim diagnoses and treats in Shah Alam. Each guide is written for patients in Malaysia, lists
+        its medical sources and is reviewed by Dr Kartini.
+      </p>
+      <p class="page-hero__meta"><a class="text-link" href="/dermatologist-malaysia/">What does a consultant dermatologist do?</a></p>
+    </div>
+  </header>
+  <section class="section">
+    <div class="container">
+      <h2 class="visually-hidden">Condition guides</h2>
+      <div class="grid grid--3">
+        {conditions.map((c) => <ConditionCard condition={c} />)}
+      </div>
+    </div>
+  </section>
+  {
+    articles.length > 0 && (
+      <section class="section section--alt">
+        <div class="container">
+          <h2>Articles on skin health</h2>
+          <div class="grid grid--3">
+            {articles.map((a) => (
+              <ArticleCard article={a} />
+            ))}
+          </div>
+          <p class="section-foot">
+            <a class="text-link" href="/articles/category/dermatology/">All skin health articles</a>
+          </p>
+        </div>
+      </section>
+    )
+  }
+  <CtaBand />
+</BaseLayout>

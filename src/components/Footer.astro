@@ -1,0 +1,166 @@
+---
+import { person, contact, social, hospitals, registrations, postNominals, scheduleCheckedOn } from '../data/site';
+const year = new Date().getFullYear();
+const mmc = registrations.find((r) => r.name.startsWith('Malaysian Medical'))!;
+const nsr = registrations.find((r) => r.name.includes('Dermatology'))!;
+const checked = new Date(scheduleCheckedOn).toLocaleDateString('en-MY', { day: 'numeric', month: 'long', year: 'numeric' });
+---
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div>
+      <p class="f-name">{person.name}</p>
+      <p class="f-text">{person.jobTitle}<br />{postNominals}</p>
+      <p class="f-text">MMC No. {mmc.value}<br />National Specialist Register No. {nsr.value}</p>
+      <ul class="f-social">
+        <li><a href={social.linkedin} rel="me noopener" target="_blank">LinkedIn</a></li>
+        <li><a href={social.facebook} rel="me noopener" target="_blank">Facebook</a></li>
+        <li><a href={social.youtube} rel="me noopener" target="_blank">YouTube</a></li>
+      </ul>
+    </div>
+
+    <nav aria-label="Dermatology">
+      <h2 class="f-head">Dermatology</h2>
+      <ul>
+        <li><a href="/dermatologist-malaysia/">Dermatologist in Malaysia</a></li>
+        <li><a href="/dermatology/acne/">Acne</a></li>
+        <li><a href="/dermatology/eczema/">Eczema</a></li>
+        <li><a href="/dermatology/psoriasis/">Psoriasis</a></li>
+        <li><a href="/dermatology/skin-allergies/">Skin allergies</a></li>
+        <li><a href="/dermatology/skin-infections/">Skin infections</a></li>
+        <li><a href="/dermatology/childrens-skin-conditions/">Children’s skin</a></li>
+        <li><a href="/dermatology/">All conditions</a></li>
+      </ul>
+    </nav>
+
+    <nav aria-label="Site">
+      <h2 class="f-head">Dr Kartini</h2>
+      <ul>
+        <li><a href="/about-dr-kartini/">About</a></li>
+        <li><a href="/beyond-skin/">Her story</a></li>
+        <li><a href="/credentials/">Qualifications</a></li>
+        <li><a href="/animal-welfare/">Animal welfare</a></li>
+        <li><a href="/community/">Community work</a></li>
+        <li><a href="/media/">Media</a></li>
+        <li><a href="/videos/">Videos</a></li>
+        <li><a href="/press/">For journalists</a></li>
+        <li><a href="/articles/">Articles</a></li>
+        <li><a href="/faq/">FAQ</a></li>
+      </ul>
+    </nav>
+
+    <div>
+      <h2 class="f-head">Clinics</h2>
+      {
+        hospitals.map((h) => (
+          <address>
+            <strong>{h.name}</strong>
+            <br />
+            {h.streetAddress}
+            <br />
+            {h.postalCode} {h.locality}, {h.region}
+            <br />
+            <a href={h.mapUrl} rel="noopener" target="_blank">Directions</a>
+          </address>
+        ))
+      }
+      <p class="f-text">
+        Appointments: <a href={`tel:${contact.appointmentsE164}`}>{contact.appointmentsDisplay}</a><br />
+        WhatsApp: <a href={contact.whatsappLink} rel="noopener" target="_blank">{contact.whatsappDisplay}</a><br />
+        Email: <a href={`mailto:${contact.email}`}>{contact.email}</a>
+      </p>
+    </div>
+  </div>
+
+  <div class="container legal">
+    <p>
+      The information on this website is general education and does not replace a consultation. In an emergency, go to the nearest emergency department or call 999.
+      Clinic hours last checked {checked}.
+    </p>
+    <p>
+      © {year} {person.name}
+      <span class="sep">|</span><a href="/editorial-policy/">Editorial policy</a>
+      <span class="sep">|</span><a href="/privacy-policy/">Privacy policy</a>
+      <span class="sep">|</span><a href="/contact/">Contact</a>
+    </p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    background: var(--bg-alt);
+    border-top: 1px solid var(--border);
+    color: var(--text-2);
+    font-size: 0.9375rem;
+    padding-top: 3rem;
+  }
+  .site-footer a {
+    color: var(--text-2);
+    text-decoration: none;
+  }
+  .site-footer a:hover {
+    color: var(--brand);
+    text-decoration: underline;
+  }
+  .footer-grid {
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+    padding-bottom: 2.5rem;
+  }
+  @media (min-width: 1000px) {
+    .footer-grid {
+      grid-template-columns: 1.3fr 1fr 1fr 1.4fr;
+    }
+  }
+  .f-name {
+    margin: 0 0 0.35rem;
+    font-size: 1.0625rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .f-text {
+    margin: 0 0 0.9rem;
+  }
+  .f-head {
+    margin: 0 0 0.75rem;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  nav li + li {
+    margin-top: 0.35rem;
+  }
+  .f-social {
+    display: flex;
+    gap: 1rem;
+  }
+  address {
+    font-style: normal;
+    margin-bottom: 1rem;
+  }
+  address strong {
+    color: var(--text);
+  }
+  .legal {
+    padding-block: 1.25rem 2rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.875rem;
+    color: var(--text-3);
+  }
+  .legal p {
+    margin: 0 0 0.4rem;
+    max-width: 90ch;
+  }
+  .legal a {
+    color: var(--text-3);
+  }
+  .sep {
+    margin: 0 0.5rem;
+    color: var(--border-strong);
+  }
+</style>

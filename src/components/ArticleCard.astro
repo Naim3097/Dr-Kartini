@@ -1,0 +1,27 @@
+---
+import { Image } from 'astro:assets';
+import { categoryImage, categoryImageAlt, categoryLabel, type Article } from '../lib/content';
+interface Props {
+  article: Article;
+  headingLevel?: 'h2' | 'h3';
+  eager?: boolean;
+  showImage?: boolean;
+}
+const { article, headingLevel = 'h3', eager = false, showImage = true } = Astro.props;
+const H = headingLevel;
+const d = article.data;
+const img = d.heroImage ?? categoryImage[d.category];
+const date = d.datePublished.toLocaleDateString('en-MY', { day: 'numeric', month: 'short', year: 'numeric' });
+---
+<article class="card card--link" lang={d.lang === 'ms' ? 'ms' : undefined}>
+  {
+    showImage && (
+      <div class="card__media">
+        <Image src={img} alt={d.heroAlt ?? categoryImageAlt[d.category]} width={640} height={400} fit="cover" loading={eager ? 'eager' : 'lazy'} />
+      </div>
+    )
+  }
+  <p class="card__label">{categoryLabel(d.category)}{d.lang === 'ms' && ', Bahasa Malaysia'}</p>
+  <H><a class="stretched" href={`/articles/${article.id}/`}>{d.title}</a></H>
+  <p class="card__meta"><time datetime={d.datePublished.toISOString().slice(0, 10)}>{date}</time></p>
+</article>

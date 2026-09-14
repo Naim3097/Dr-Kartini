@@ -1,0 +1,37 @@
+---
+interface Props {
+  video: { id: string; slug: string; title: string; seconds: number; lang: string; category: string };
+  headingLevel?: 'h2' | 'h3';
+}
+const { video, headingLevel = 'h3' } = Astro.props;
+const H = headingLevel;
+const mins = Math.floor(video.seconds / 60);
+const secs = String(video.seconds % 60).padStart(2, '0');
+---
+<article class="card card--link video-card">
+  <div class="card__media">
+    <img src={`https://i.ytimg.com/vi/${video.id}/hqdefault.jpg`} alt="" width="480" height="360" loading="lazy" decoding="async" />
+    <span class="dur">{mins}:{secs}</span>
+  </div>
+  <H><a class="stretched" href={`/videos/${video.slug}/`}>{video.title}</a></H>
+  <p class="card__meta">{video.lang === 'ms' ? 'Bahasa Malaysia' : 'English'}</p>
+</article>
+<style>
+  .card__media {
+    position: relative;
+  }
+  .dur {
+    position: absolute;
+    right: 0.5rem;
+    bottom: 0.5rem;
+    padding: 0.05rem 0.4rem;
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.75);
+    color: #fff;
+    font-size: 0.8125rem;
+    font-weight: 600;
+  }
+  .video-card h3 {
+    font-size: 1.0625rem;
+  }
+</style>

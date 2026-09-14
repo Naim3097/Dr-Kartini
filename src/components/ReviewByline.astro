@@ -1,0 +1,38 @@
+---
+import { Image } from 'astro:assets';
+import headshot from '../assets/images/portraits/dr-kartini-farah-rahim-consultant-dermatologist.jpg';
+interface Props {
+  published?: Date;
+  updated?: Date;
+  reviewed?: Date;
+  mode?: 'author' | 'reviewer';
+  readingMinutes?: number;
+}
+const { published, updated, reviewed, mode = 'author', readingMinutes } = Astro.props;
+const fmt = (d: Date) => d.toLocaleDateString('en-MY', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Asia/Kuala_Lumpur' });
+const iso = (d: Date) => d.toISOString().slice(0, 10);
+const showUpdated = updated && published && iso(updated) !== iso(published);
+---
+<div class="byline">
+  <Image src={headshot} alt="Dr Kartini Farah Rahim" width={88} height={88} loading="eager" />
+  <div>
+    <div>
+      {mode === 'author' ? 'By ' : 'Written and medically reviewed by '}
+      <a href="/about-dr-kartini/" rel="author">Dr Kartini Farah Rahim</a>, Consultant Dermatologist
+    </div>
+    <div class="muted">
+      {published && <>Published <time datetime={iso(published)}>{fmt(published)}</time></>}{showUpdated && <>, updated <time datetime={iso(updated!)}>{fmt(updated!)}</time></>}{reviewed && <>, last reviewed <time datetime={iso(reviewed)}>{fmt(reviewed)}</time></>}{readingMinutes && <span class="read">{readingMinutes} min read</span>}
+    </div>
+  </div>
+</div>
+<style>
+  .read::before {
+    content: '';
+    display: inline-block;
+    width: 1px;
+    height: 0.8em;
+    margin: 0 0.6rem;
+    background: var(--border-strong);
+    vertical-align: -0.05em;
+  }
+</style>

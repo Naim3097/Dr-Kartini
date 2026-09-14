@@ -1,0 +1,159 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Faq from '../components/Faq.astro';
+import { pages } from '../data/pages';
+import { hospitals, contact, scheduleCheckedOn } from '../data/site';
+import { graph, webPageNode, faqNode, abs, ids } from '../lib/schema';
+import { whatsappHref } from '../lib/whatsapp';
+import ashImg from '../assets/images/clinical/avisena-specialist-hospital-shah-alam.jpg';
+import awcshImg from '../assets/images/clinical/avisena-womens-childrens-specialist-hospital.jpg';
+
+const meta = pages.appointments;
+const url = abs(meta.path);
+const imgs: Record<string, ImageMetadata> = { ash: ashImg, awcsh: awcshImg };
+const checked = new Date(scheduleCheckedOn).toLocaleDateString('en-MY', { day: 'numeric', month: 'long', year: 'numeric' });
+
+const faqs = [
+  {
+    q: 'How do I make an appointment with Dr Kartini?',
+    a: `WhatsApp Dr Kartini on ${contact.whatsappDisplay} to confirm her schedule, then book with Avisena’s appointment line on ${contact.appointmentsDisplay}. You can also call the Avisena general line on ${contact.hospitalGeneralDisplay}.`,
+  },
+  {
+    q: 'Which Avisena hospital should I go to?',
+    a: 'Either. Dr Kartini holds sessions at both Avisena Specialist Hospital and Avisena Women’s & Children’s Specialist Hospital, which are close to each other in Seksyen 14, Shah Alam. Choose the session that suits you. Families with young children often prefer the Women’s & Children’s hospital.',
+  },
+  {
+    q: 'Can I WhatsApp Dr Kartini about a medical problem?',
+    a: 'WhatsApp is for appointments and non-urgent enquiries. A diagnosis needs a consultation and examination. For urgent problems, go to the nearest emergency department or call 999.',
+  },
+  {
+    q: 'Does Dr Kartini accept walk-in patients?',
+    a: 'Dr Kartini’s sessions are often full, so please contact her or Avisena before you travel.',
+  },
+];
+
+const schema = graph([
+  webPageNode({
+    url,
+    type: ['WebPage', 'ContactPage'],
+    name: meta.title,
+    description: meta.description,
+    imageUrl: abs('/og/page/appointments.jpg'),
+    about: { '@id': ids.physician },
+    mainEntity: { '@id': ids.physician },
+  }),
+  faqNode(url, faqs),
+]);
+---
+<BaseLayout title={meta.title} description={meta.description} path={meta.path} ogImage="/og/page/appointments.jpg" schema={schema} crumbs={[{ name: 'Home', path: '/' }, { name: 'Appointments', path: meta.path }]}>
+  <header class="page-hero">
+    <div class="container">
+      <h1>Appointments</h1>
+      <p class="lead">Dr Kartini Farah Rahim holds clinics at two Avisena hospitals in Seksyen 14, Shah Alam. Her sessions are often full, so please WhatsApp her before booking.</p>
+      <ol class="steps">
+        <li>
+          <h2>1. Check the schedule</h2>
+          <p>WhatsApp Dr Kartini on <a href={whatsappHref(meta.path)} target="_blank" rel="noopener" data-track="whatsapp_click">{contact.whatsappDisplay}</a>.</p>
+        </li>
+        <li>
+          <h2>2. Book with Avisena</h2>
+          <p>Call <a href={`tel:${contact.appointmentsE164}`} data-track="phone_click">{contact.appointmentsDisplay}</a> (appointments) or {contact.hospitalGeneralDisplay} (general line).</p>
+        </li>
+        <li>
+          <h2>3. Prepare</h2>
+          <p>Bring your medicines, a list of products you use, photos of flares and any referral letter.</p>
+        </li>
+      </ol>
+    </div>
+  </header>
+
+  <section class="section" aria-labelledby="hours-title">
+    <div class="container">
+      <div class="section-head">
+        <h2 id="hours-title">Locations and clinic hours</h2>
+        <p class="muted">Sessions as published by Avisena, last checked {checked}. Hours may change on public holidays and during leave.</p>
+      </div>
+      <div class="grid grid--2">
+        {
+          hospitals.map((h) => (
+            <article class="card">
+              <div class="card__media">
+                <Image src={imgs[h.id]} alt={`${h.name}, Shah Alam`} width={640} height={400} fit="cover" />
+              </div>
+              <h3>{h.name}</h3>
+              <address>
+                {h.streetAddress},<br />
+                {h.postalCode} {h.locality}, {h.region}, Malaysia
+              </address>
+              <table class="hours">
+                <caption class="visually-hidden">Dr Kartini’s sessions at {h.name}</caption>
+                <tbody>
+                  {h.sessions.map((s) => (
+                    <tr>
+                      <th scope="row">{s.day}</th>
+                      <td>
+                        {s.hours}
+                        {s.note && <span class="muted"> ({s.note})</span>}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <p class="card__meta">
+                <a href={h.mapUrl} target="_blank" rel="noopener">Directions</a>
+                <span class="sep">|</span>
+                <a href={h.profileUrl} target="_blank" rel="noopener">Avisena profile</a>
+              </p>
+            </article>
+          ))
+        }
+      </div>
+      <div class="notice notice--urgent emergency">
+        <strong>Emergencies:</strong> if you have difficulty breathing, swelling of the face or throat, widespread blistering or peeling skin, or feel very unwell with
+        a rash and fever, do not wait for an appointment. Go to the nearest emergency department or call 999.
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container--narrow">
+      <Faq faqs={faqs} heading="Booking questions" />
+      <p class="section-foot">First visit? Read <a href="/articles/finding-the-right-dermatologist-for-your-skin-condition/">how to prepare for a dermatology appointment</a>.</p>
+    </div>
+  </section>
+</BaseLayout>
+<style>
+  .steps {
+    display: grid;
+    gap: 1.5rem 2.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+    list-style: none;
+    margin: 2rem 0 0;
+    padding: 0;
+  }
+  .steps li {
+    padding-top: 0.9rem;
+    border-top: 2px solid var(--brand);
+  }
+  .steps h2 {
+    font-size: 1.0625rem;
+    margin-bottom: 0.3rem;
+  }
+  .steps p {
+    margin: 0;
+    color: var(--text-2);
+  }
+  address {
+    font-style: normal;
+    color: var(--text-2);
+    margin-bottom: 1rem;
+  }
+  .sep {
+    margin: 0 0.5rem;
+    color: var(--border-strong);
+  }
+  .emergency {
+    margin-top: 2rem;
+  }
+</style>

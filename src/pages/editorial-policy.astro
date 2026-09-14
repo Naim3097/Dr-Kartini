@@ -1,0 +1,65 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { pages } from '../data/pages';
+import { contact } from '../data/site';
+import { graph, webPageNode, abs, ids } from '../lib/schema';
+
+const meta = pages.editorial;
+const url = abs(meta.path);
+const schema = graph([webPageNode({ url, type: 'WebPage', name: meta.title, description: meta.description, about: { '@id': ids.website } })]);
+---
+<BaseLayout title={meta.title} description={meta.description} path={meta.path} schema={schema} crumbs={[{ name: 'Home', path: '/' }, { name: 'Editorial Policy', path: meta.path }]}>
+  <header class="page-hero">
+    <div class="container--narrow">
+      <h1>Editorial and medical review policy</h1>
+      <p class="lead">How health information on DrKartini.net is written, reviewed, sourced and kept up to date.</p>
+    </div>
+  </header>
+  <section class="section">
+    <div class="container--narrow prose">
+      <h2>Who is responsible for the content?</h2>
+      <p>
+        DrKartini.net is the official website of Dr Kartini Farah Rahim, Consultant Dermatologist (Malaysian Medical Council No. 43483; National Specialist Register
+        No. 128619). Dr Kartini is responsible for all medical content published on the site.
+      </p>
+
+      <h2>How is medical content reviewed?</h2>
+      <ul>
+        <li>Every condition guide and dermatology article is reviewed and approved by Dr Kartini before publication.</li>
+        <li>Pages show the date first published and the date last reviewed. Condition guides are reviewed at least once a year, and sooner when guidelines change.</li>
+        <li>Content is written for patients and families in Malaysia, in plain English or Bahasa Malaysia.</li>
+      </ul>
+
+      <h2>What sources do we use?</h2>
+      <p>
+        We base medical information on current clinical practice guidelines and reputable sources, including Malaysian Clinical Practice Guidelines, the Ministry of
+        Health Malaysia and the National Pharmaceutical Regulatory Agency, and international bodies such as the World Health Organization, the NHS, the British
+        Association of Dermatologists, the American Academy of Dermatology and DermNet. Sources are listed at the end of each guide.
+      </p>
+
+      <h2>Advertising and independence</h2>
+      <ul>
+        <li>This website follows the Malaysian Medical Council’s guidance on the dissemination of information by medical practitioners.</li>
+        <li>We do not publish patient testimonials, before-and-after photographs, price promotions or claims of superiority.</li>
+        <li>We do not recommend or endorse commercial skincare brands or products in our medical content.</li>
+        <li>Television appearances and education programmes that were sponsored are identified as such where known.</li>
+      </ul>
+
+      <h2>Opinion and advocacy content</h2>
+      <p>
+        Articles on animal welfare, the environment and public issues reflect Dr Kartini’s personal views and experience as an advocate. They are clearly categorised
+        as perspectives, press statements, or animal welfare and environment writing, and are separate from medical guidance.
+      </p>
+
+      <h2>Not a substitute for a consultation</h2>
+      <p>
+        Information on this website is general education. It cannot diagnose your condition or replace a consultation with a doctor who can examine you. If you have a
+        medical emergency, go to the nearest emergency department or call 999.
+      </p>
+
+      <h2>Corrections</h2>
+      <p>If you believe something on this site is inaccurate or out of date, please email <a href={`mailto:${contact.email}`}>{contact.email}</a>. We review every report and correct errors promptly.</p>
+      <p class="small muted">Last updated 14 September 2026.</p>
+    </div>
+  </section>
+</BaseLayout>

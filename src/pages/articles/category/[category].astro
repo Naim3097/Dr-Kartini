@@ -1,0 +1,59 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import ArticleCard from '../../../components/ArticleCard.astro';
+import { getArticles } from '../../../lib/content';
+import { articleCategories, type ArticleCategory } from '../../../data/site';
+import { graph, webPageNode, abs } from '../../../lib/schema';
+
+export async function getStaticPaths() {
+  const articles = await getArticles();
+  return (Object.keys(articleCategories) as ArticleCategory[])
+    .map((category) => ({ category, list: articles.filter((a) => a.data.category === category) }))
+    .filter((c) => c.list.length > 0)
+    .map(({ category, list }) => ({ params: { category }, props: { category, list } }));
+}
+
+const { category, list } = Astro.props;
+const cat = articleCategories[category as ArticleCategory];
+const path = `/articles/category/${category}/`;
+const title = `${cat.label} Articles | Dr Kartini Farah Rahim`;
+const description = `${cat.description} Browse ${list.length} article${list.length === 1 ? '' : 's'} in English and Bahasa Malaysia.`.slice(0, 160);
+const url = abs(path);
+const schema = graph([
+  webPageNode({ url, type: 'CollectionPage', name: title, description }),
+  {
+    '@type': 'ItemList',
+    '@id': `${url}#list`,
+    numberOfItems: list.length,
+    itemListElement: list.map((a, i) => ({ '@type': 'ListItem', position: i + 1, url: abs(`/articles/${a.id}/`), name: a.data.title })),
+  },
+]);
+---
+<BaseLayout
+  title={title}
+  description={description}
+  path={path}
+  ogImage="/og/page/articles.jpg"
+  schema={schema}
+  crumbs={[
+    { name: 'Home', path: '/' },
+    { name: 'Articles', path: '/articles/' },
+    { name: cat.label, path },
+  ]}
+>
+  <header class="page-hero">
+    <div class="container">
+      <h1>{cat.label}</h1>
+      <p class="lead">{cat.description}</p>
+    </div>
+  </header>
+  <section class="section">
+    <div class="container">
+      <h2 class="visually-hidden">{cat.label} articles</h2>
+      <div class="grid grid--3">
+        {list.map((a) => <ArticleCard article={a} />)}
+      </div>
+      <p class="section-foot"><a class="text-link" href="/articles/">All articles</a></p>
+    </div>
+  </section>
+</BaseLayout>

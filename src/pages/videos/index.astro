@@ -1,0 +1,57 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import VideoCard from '../../components/VideoCard.astro';
+import VideoEmbed from '../../components/VideoEmbed.astro';
+import { pages } from '../../data/pages';
+import { social } from '../../data/site';
+import { videos } from '../../lib/content';
+import { graph, webPageNode, abs, ids } from '../../lib/schema';
+
+const meta = pages.videos;
+const url = abs(meta.path);
+const groups = [
+  { key: 'dermatology', title: 'Skin health', list: videos.filter((v) => v.category === 'dermatology') },
+  { key: 'media', title: 'Television', list: videos.filter((v) => v.category === 'media') },
+  { key: 'animal-welfare', title: 'Animal welfare and dog safety', list: videos.filter((v) => v.category === 'animal-welfare') },
+];
+const lead = videos.find((v) => v.id === 'kp8Wmir53AE')!;
+
+const schema = graph([
+  webPageNode({ url, type: 'CollectionPage', name: meta.title, description: meta.description, imageUrl: abs('/og/page/videos.jpg'), about: { '@id': ids.person } }),
+  {
+    '@type': 'ItemList',
+    '@id': `${url}#videos`,
+    numberOfItems: videos.length,
+    itemListElement: videos.map((v, i) => ({ '@type': 'ListItem', position: i + 1, url: abs(`/videos/${v.slug}/`), name: v.title })),
+  },
+]);
+---
+<BaseLayout title={meta.title} description={meta.description} path={meta.path} ogImage="/og/page/videos.jpg" schema={schema} crumbs={[{ name: 'Home', path: '/' }, { name: 'Videos', path: meta.path }]} preconnectYouTube>
+  <header class="page-hero">
+    <div class="container split split--even split--center">
+      <div>
+        <h1>Videos</h1>
+        <p class="lead">Skin care advice, television interviews and dog safety episodes with Dr Kartini, in English and Bahasa Malaysia.</p>
+        <p class="btn-row"><a class="btn btn--secondary" href={social.youtube} target="_blank" rel="noopener">YouTube channel</a></p>
+      </div>
+      <figure>
+        <VideoEmbed id={lead.id} title={lead.title} eager />
+        <figcaption><a href={`/videos/${lead.slug}/`}>{lead.title}</a></figcaption>
+      </figure>
+    </div>
+  </header>
+  {
+    groups.map((g, i) => (
+      <section class:list={['section', { 'section--alt': i % 2 === 0 }]} aria-labelledby={`g-${g.key}`}>
+        <div class="container">
+          <h2 id={`g-${g.key}`}>{g.title}</h2>
+          <div class="grid grid--3">
+            {g.list.map((v) => (
+              <VideoCard video={v} />
+            ))}
+          </div>
+        </div>
+      </section>
+    ))
+  }
+</BaseLayout>

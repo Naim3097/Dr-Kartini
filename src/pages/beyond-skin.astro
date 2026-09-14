@@ -1,0 +1,165 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { pages } from '../data/pages';
+import { graph, webPageNode, articleNode, abs, ids } from '../lib/schema';
+
+import kurungImg from '../assets/images/portraits/dr-kartini-farah-rahim-baju-kurung-stethoscope.jpg';
+import wrapImg from '../assets/images/clinical/childrens-skin-care-dr-kartini.jpg';
+import dogImg from '../assets/images/animal-welfare/dr-kartini-with-rescued-dog.jpg';
+import gasingImg from '../assets/images/environment/save-bukit-gasing-community-advocacy.jpg';
+
+const meta = pages.story;
+const url = abs(meta.path);
+const schema = graph([
+  webPageNode({ url, type: 'AboutPage', name: meta.title, description: meta.description, imageUrl: abs('/og/page/story.jpg'), about: { '@id': ids.person }, speakable: ['.story-intro'] }),
+  articleNode({
+    url,
+    headline: 'Beyond Skin: The Story of Dr Kartini Farah Rahim',
+    description: meta.description,
+    imageUrl: abs('/og/page/story.jpg'),
+    datePublished: '2026-09-14T00:00:00+08:00',
+    dateModified: '2026-09-14T00:00:00+08:00',
+    keywords: ['Dr Kartini story', 'Malaysian dermatologist', 'animal welfare', 'PEKA', 'Raden Adjeng Kartini'],
+    section: 'Profile',
+    inLanguage: 'en-MY',
+    wordCount: 700,
+    medical: false,
+    citations: [],
+    about: [{ '@id': ids.person }],
+  }),
+]);
+---
+<BaseLayout
+  title={meta.title}
+  description={meta.description}
+  path={meta.path}
+  ogImage="/og/page/story.jpg"
+  ogType="article"
+  schema={schema}
+  crumbs={[{ name: 'Home', path: '/' }, { name: 'About', path: '/about-dr-kartini/' }, { name: 'Her story', path: meta.path }]}
+  article={{ publishedTime: '2026-09-14T00:00:00+08:00', section: 'Profile' }}
+>
+  <article>
+    <header class="page-hero">
+      <div class="container split split--center">
+        <div>
+          <h1>Beyond Skin: The Story of Dr Kartini</h1>
+          <p class="lead story-intro">
+            How a dermatologist trained in Dublin, Scotland and Kuala Lumpur came to spend her free time rescuing animals and campaigning on plastic waste.
+          </p>
+        </div>
+        <div class="photo photo--portrait hero-photo">
+          <Image src={kurungImg} alt="Dr Kartini Farah Rahim in a blue baju kurung with a stethoscope" widths={[420, 805]} sizes="(min-width: 900px) 400px, 90vw" loading="eager" fetchpriority="high" />
+        </div>
+      </div>
+    </header>
+
+    <div class="section">
+      <div class="container--narrow prose">
+        <h2>Her name</h2>
+        <p>
+          Kartini’s grandmother named her after Raden Adjeng Kartini, the Indonesian heroine remembered for her campaign for women’s education. She was born in
+          Petaling Jaya, the eldest of four children, and studied medicine at University College Dublin before training in the United Kingdom.
+        </p>
+
+        <h2>Training in the UK and Malaysia</h2>
+        <p>
+          She started in dermatology in 2004 as a research fellow in Dundee, Scotland. She gained the Diploma in Dermatology from the Royal College of Physicians
+          and Surgeons of Glasgow in 2005 and MRCP (UK) in 2007.
+        </p>
+        <p>
+          In Malaysia she worked at Hospital Kuala Lumpur and Hospital Serdang, completed an Advanced Master of Dermatology at Universiti Kebangsaan Malaysia, and
+          taught medicine and dermatology at Universiti Putra Malaysia for more than ten years. She now sees patients at the two Avisena hospitals in Shah Alam.
+        </p>
+
+        <h2>Explaining skin conditions</h2>
+        <blockquote>
+          <p>“I always see myself as a teacher. Sometimes the same information needs to be repeated every time an issue comes up.”</p>
+        </blockquote>
+        <p class="small muted">Translated from an interview with Harian Metro, 16 May 2019.</p>
+        <p>
+          Eczema, psoriasis, hidradenitis suppurativa and ichthyosis are visible, often long-term, and widely misunderstood. From 2015 Dr Kartini became involved
+          with patient support groups, awareness campaigns and health columns, and she chaired National Skin Day from 2015 to 2017. She still explains skin care
+          on television and in print.
+        </p>
+        <figure>
+          <Image src={wrapImg} alt="Dr Kartini applying wet wraps to a young child with eczema" widths={[480, 870]} sizes="(min-width: 820px) 480px, 90vw" class="story-portrait" />
+          <figcaption>Wet wrap treatment for a young child with eczema. The child’s face has been blurred.</figcaption>
+        </figure>
+
+        <h2>Rescuing animals</h2>
+        <p>
+          Dr Kartini rescues cats and dogs, and calls herself “Mummy Cat-Tini”. In August 2025 she picked up a lost kitten, Mochi, from a busy road in Shah Alam. She is a board member of Filbert’s Foundation for Furry Friends and argues for neutering, vaccination and rehoming as the long-term way to
+          reduce stray numbers.
+        </p>
+
+        <h2>Environmental work</h2>
+        <p>
+          As Vice-President of Pertubuhan Pelindung Khazanah Alam Malaysia (PEKA), she writes and speaks about single-use plastics, recycling and the protection of
+          urban forests such as Bukit Gasing. She brings her own food containers to the clinic.
+        </p>
+        <div class="duo">
+          <figure>
+            <Image src={dogImg} alt="Dr Kartini crouching with a rescued dog" widths={[400, 768]} sizes="(min-width: 820px) 370px, 45vw" />
+          </figure>
+          <figure>
+            <Image src={gasingImg} alt="Community members calling for the protection of Bukit Gasing forest in Petaling Jaya" widths={[400, 800]} sizes="(min-width: 820px) 370px, 45vw" />
+          </figure>
+        </div>
+
+        <h2>Why it fits together</h2>
+        <p>
+          Dr Kartini sees no contradiction between her clinical work and her volunteering. In her words, how people treat animals and the environment says a lot
+          about a society. Both come from the same habit of looking after others.
+        </p>
+
+        <p class="next">
+          Continue reading: <a href="/about-dr-kartini/">full profile</a>, <a href="/animal-welfare/">animal welfare</a>, <a href="/community/environment/">environment</a>,
+          <a href="/media/">media</a>.
+        </p>
+      </div>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .hero-photo {
+    max-width: 400px;
+    width: 100%;
+    justify-self: center;
+  }
+  figure {
+    margin: 1.75rem 0;
+  }
+  figure :global(img) {
+    margin: 0;
+    border-radius: var(--radius);
+  }
+  figure :global(.story-portrait) {
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+    object-position: center 35%;
+  }
+  .duo {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 1.75rem 0;
+  }
+  .duo figure {
+    margin: 0;
+  }
+  .duo :global(img) {
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+  }
+  .next {
+    margin-top: 2.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--border);
+  }
+</style>

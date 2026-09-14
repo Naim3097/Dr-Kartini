@@ -1,0 +1,236 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import KeyFacts from '../components/KeyFacts.astro';
+import Faq from '../components/Faq.astro';
+import { pages } from '../data/pages';
+import { person, career, affiliations, registrations, hospitals, social, postNominals } from '../data/site';
+import { graph, webPageNode, faqNode, abs, ids } from '../lib/schema';
+
+import deskImg from '../assets/images/portraits/dr-kartini-farah-rahim-at-desk.jpg';
+import tvImg from '../assets/images/media/dr-kartini-tv-studio-doctors-programme.jpg';
+
+const meta = pages.about;
+const url = abs(meta.path);
+const nsr = registrations.find((r) => r.name.includes('Dermatology'))!;
+const mmc = registrations.find((r) => r.name.startsWith('Malaysian Medical'))!;
+
+const facts = [
+  { label: 'Full name', value: 'Dr Kartini Farah Rahim (also Dr Kartini Farah Abdul Rahim)' },
+  { label: 'Profession', value: 'Consultant Dermatologist' },
+  { label: 'Specialist registration', value: `National Specialist Register No. ${nsr.value} (Dermatology; Internal Medicine)` },
+  { label: 'MMC registration', value: `No. ${mmc.value}` },
+  { label: 'Qualifications', value: postNominals },
+  { label: 'Practises at', value: 'Avisena Specialist Hospital and Avisena Women’s & Children’s Specialist Hospital, Shah Alam' },
+  { label: 'Languages', value: 'English, Bahasa Malaysia' },
+  { label: 'Other roles', value: 'Vice-President, PEKA Malaysia; Board Member, Filbert’s Foundation for Furry Friends' },
+];
+
+const faqs = [
+  {
+    q: 'What are Dr Kartini’s qualifications?',
+    a: 'Dr Kartini holds an MBBCh BAO from University College Dublin, a Diploma in Dermatology from the Royal College of Physicians and Surgeons of Glasgow (2005), MRCP (UK) (2007) and an Advanced Master of Dermatology from Universiti Kebangsaan Malaysia (2011). She is a Fellow of the Asian Academy of Dermatology and Venereology (FAADV).',
+  },
+  {
+    q: 'Is Dr Kartini a registered specialist?',
+    a: `Yes. Dr Kartini is registered with the Malaysian Medical Council (No. ${mmc.value}) and on the National Specialist Register in dermatology and internal medicine (No. ${nsr.value}). Both registrations can be checked on the official public registers.`,
+  },
+  {
+    q: 'What is Dr Kartini’s academic background?',
+    a: 'After returning from the United Kingdom in 2007, Dr Kartini worked for more than ten years as a Senior Lecturer in Medicine and Dermatology at Universiti Putra Malaysia, teaching medical students alongside her clinical work.',
+  },
+  {
+    q: 'Which organisations is Dr Kartini involved with?',
+    a: 'Dr Kartini is Vice-President of Pertubuhan Pelindung Khazanah Alam Malaysia (PEKA), a board member of Filbert’s Foundation for Furry Friends, Media Advisor to the Malaysia Eczema Support Community, and main medical advisor to the Hidradenitis Suppurativa Support Group Malaysia and Pertubuhan Kebajikan Pesakit Ichthyosis Malaysia.',
+  },
+];
+
+const schema = graph([
+  webPageNode({
+    url,
+    type: ['ProfilePage', 'AboutPage'],
+    name: meta.title,
+    description: meta.description,
+    imageUrl: abs('/og/page/about.jpg'),
+    about: { '@id': ids.person },
+    mainEntity: { '@id': ids.person },
+    speakable: ['#bio-summary'],
+    dateModified: '2026-09-14',
+  }),
+  faqNode(url, faqs),
+]);
+
+const related = [
+  { label: 'Conditions treated', href: '/dermatology/' },
+  { label: 'Seeing a dermatologist in Malaysia', href: '/dermatologist-malaysia/' },
+  { label: 'Acne', href: '/dermatology/acne/' },
+  { label: 'Eczema', href: '/dermatology/eczema/' },
+  { label: 'Psoriasis', href: '/dermatology/psoriasis/' },
+  { label: 'Qualifications and registration', href: '/credentials/' },
+  { label: 'Dr Kartini’s story', href: '/beyond-skin/' },
+  { label: 'Animal welfare', href: '/animal-welfare/' },
+  { label: 'Environmental work', href: '/community/environment/' },
+  { label: 'Empowerment Sentuhan', href: '/community/empowerment-sentuhan/' },
+  { label: 'Community work', href: '/community/' },
+  { label: 'Media coverage', href: '/media/' },
+  { label: 'Videos', href: '/videos/' },
+  { label: 'For journalists', href: '/press/' },
+];
+---
+<BaseLayout
+  title={meta.title}
+  description={meta.description}
+  path={meta.path}
+  ogImage="/og/page/about.jpg"
+  ogType="profile"
+  schema={schema}
+  crumbs={[{ name: 'Home', path: '/' }, { name: 'About', path: meta.path }]}
+>
+  <header class="page-hero">
+    <div class="container split split--center">
+      <div>
+        <h1>About Dr Kartini Farah Rahim</h1>
+        <p class="lead" id="bio-summary">{person.oneLineBio}</p>
+        <div class="btn-row">
+          <a class="btn" href="/appointments/">Book an appointment</a>
+          <a class="btn btn--secondary" href="/credentials/">Qualifications</a>
+        </div>
+      </div>
+      <div class="photo photo--portrait hero-photo">
+        <Image src={deskImg} alt="Dr Kartini Farah Rahim seated at her desk with a stethoscope" widths={[420, 700]} sizes="(min-width: 900px) 400px, 90vw" loading="eager" fetchpriority="high" />
+      </div>
+    </div>
+  </header>
+
+  <section class="section" aria-labelledby="bio">
+    <div class="container article-layout">
+      <div>
+        <div class="prose">
+          <h2 id="bio">Biography</h2>
+          <p>
+            Dr Kartini Farah Rahim is a Consultant Dermatologist registered on the National Specialist Register (No. {nsr.value}). She sees adults and children
+            with eczema, psoriasis, acne, skin infections, allergic skin reactions and blistering disorders.
+          </p>
+          <p>
+            She studied medicine at University College Dublin and began working in dermatology in 2004 as a research fellow in Dundee, Scotland. She was awarded
+            the Diploma in Dermatology by the Royal College of Physicians and Surgeons of Glasgow in 2005, and became a Member of the Royal Colleges of Physicians
+            of the United Kingdom in 2007.
+          </p>
+          <p>
+            Back in Malaysia, she worked as a physician and dermatologist at Hospital Kuala Lumpur and Hospital Serdang, and completed an Advanced Master of
+            Dermatology at Universiti Kebangsaan Malaysia in 2011. For more than ten years she was a Senior Lecturer in Medicine and Dermatology at Universiti Putra
+            Malaysia. She now practises at Avisena Specialist Hospital and Avisena Women’s &amp; Children’s Specialist Hospital in Shah Alam.
+          </p>
+
+          <h2>Clinical interests</h2>
+          <ul>
+            {person.clinicalFocus.map((c) => <li>{c}</li>)}
+          </ul>
+          <p>
+            Much of her work is with women and children. She is a medical advisor to Malaysian patient support groups for eczema, hidradenitis suppurativa and
+            ichthyosis, and chaired National Skin Day (Hari Kulit Kebangsaan) from 2015 to 2017.
+          </p>
+
+          <h2>Work outside the clinic</h2>
+          <p>
+            Dr Kartini is Vice-President of PEKA Malaysia, an environmental NGO, and a board member of Filbert’s Foundation for Furry Friends. She rescues cats and
+            dogs, and speaks publicly about humane management of stray animals, adoption and responsible pet ownership.
+          </p>
+          <p>
+            She has discussed skin health on TV3’s <em>Helo Doktor</em> and RTM’s <em>Bicara DR</em>, and has written for or been interviewed by The Star, Harian
+            Metro, Utusan Malaysia and Selangor Journal.
+          </p>
+
+          <h2>Her name</h2>
+          <p>{person.namesake} She prefers to be called simply Dr Kartini.</p>
+        </div>
+      </div>
+
+      <aside class="article-aside">
+        <div class="aside-block">
+          <h2>Official profiles</h2>
+          <ul>
+            {hospitals.map((h) => <li><a href={h.profileUrl} target="_blank" rel="noopener">{h.name}</a></li>)}
+            <li><a href={social.linkedin} target="_blank" rel="me noopener">LinkedIn</a></li>
+            <li><a href={social.facebook} target="_blank" rel="me noopener">Facebook</a></li>
+            <li><a href={social.youtube} target="_blank" rel="me noopener">YouTube</a></li>
+          </ul>
+        </div>
+        <div class="aside-block">
+          <h2>Related pages</h2>
+          <ul>
+            {related.map((r) => <li><a href={r.href}>{r.label}</a></li>)}
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container--narrow">
+      <KeyFacts facts={facts} heading="Summary" />
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="career-title">
+    <div class="container split split--even">
+      <div>
+        <h2 id="career-title">Training and career</h2>
+        <ol class="year-list">
+          {
+            career.map((c) => (
+              <li>
+                <span class="year">{c.year}</span>
+                <div>
+                  <h3>{c.title}</h3>
+                  <p>{c.org}</p>
+                </div>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+      <div>
+        <h2>Roles and memberships</h2>
+        <ul class="year-list">
+          {
+            affiliations.map((a) => (
+              <li class="role">
+                <div>
+                  <h3>{a.org}</h3>
+                  <p>{a.role}</p>
+                </div>
+              </li>
+            ))
+          }
+        </ul>
+        <figure class="tv">
+          <div class="photo photo--landscape">
+            <Image src={tvImg} alt="Dr Kartini in a television studio after a health programme" widths={[480, 800]} sizes="(min-width: 900px) 520px, 90vw" />
+          </div>
+          <figcaption>On set after a televised health programme.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container--narrow">
+      <Faq faqs={faqs} heading="Questions about Dr Kartini" />
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero-photo {
+    max-width: 400px;
+    width: 100%;
+    justify-self: center;
+  }
+  .role {
+    grid-template-columns: 1fr !important;
+  }
+  .tv {
+    margin-top: 2rem;
+  }
+</style>

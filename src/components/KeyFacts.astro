@@ -1,0 +1,30 @@
+---
+interface Props {
+  facts: { label: string; value: string }[];
+  heading?: string;
+}
+const { facts, heading } = Astro.props;
+---
+{
+  facts.length > 0 && (
+    <section class="key-facts" aria-label={heading ?? 'Key facts'}>
+      {heading && <h2 class="kf-title">{heading}</h2>}
+      <table class="facts-table">
+        <tbody>
+          {facts.map((f) => (
+            <tr>
+              <th scope="row">{f.label}</th>
+              <td>{f.value}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
+  )
+}
+<style>
+  .kf-title {
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+  }
+</style>

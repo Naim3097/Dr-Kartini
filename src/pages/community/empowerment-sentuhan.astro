@@ -1,0 +1,108 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import VideoCard from '../../components/VideoCard.astro';
+import Faq from '../../components/Faq.astro';
+import { pages } from '../../data/pages';
+import { videos } from '../../lib/content';
+import { graph, webPageNode, faqNode, abs, ids } from '../../lib/schema';
+
+import seated from '../../assets/images/portraits/dr-kartini-farah-rahim-baju-kurung-seated.jpg';
+import childImg from '../../assets/images/clinical/childrens-skin-care-dr-kartini.jpg';
+import wrapImg from '../../assets/images/portraits/dr-kartini-farah-rahim-scrubs.jpg';
+
+const meta = pages.empowerment;
+const url = abs(meta.path);
+const eduVideos = ['NW_ns61YvrA', 'GsoPzlewQ6k', 'Xfh_QtpGFqg', 'UjZV_u3IRiY', 'ufWS-i1N9C4', 'ySV9SH_5VN4'].map((id) => videos.find((v) => v.id === id)!);
+
+const faqs = [
+  {
+    q: 'What is Empowerment Sentuhan?',
+    a: 'Empowerment Sentuhan is Dr Kartini Farah Rahim’s skin health education programme for women and children. It covers everyday skin care, common conditions such as eczema, and how to avoid harmful products.',
+  },
+  {
+    q: 'What does “sentuhan” mean?',
+    a: '“Sentuhan” is the Malay word for touch.',
+  },
+  {
+    q: 'Can organisations invite Dr Kartini for skin health talks?',
+    a: 'Yes. Schools, parent groups, women’s organisations and workplaces can invite Dr Kartini to give skin health talks in English or Bahasa Malaysia. Please send details through the contact page.',
+  },
+];
+
+const schema = graph([
+  webPageNode({ url, type: 'WebPage', name: meta.title, description: meta.description, imageUrl: abs('/og/page/empowerment.jpg'), about: { '@id': ids.person } }),
+  faqNode(url, faqs),
+]);
+---
+<BaseLayout title={meta.title} description={meta.description} path={meta.path} ogImage="/og/page/empowerment.jpg" schema={schema} crumbs={[{ name: 'Home', path: '/' }, { name: 'Community', path: '/community/' }, { name: 'Empowerment Sentuhan', path: meta.path }]} preconnectYouTube>
+  <header class="page-hero">
+    <div class="container split split--center">
+      <div>
+        <h1>Empowerment Sentuhan</h1>
+        <p class="lead">
+          Skin health education for women, parents and children, run by Consultant Dermatologist Dr Kartini Farah Rahim through talks, television and online
+          videos.
+        </p>
+      </div>
+      <div class="photo photo--portrait hero-photo">
+        <Image src={seated} alt="Dr Kartini Farah Rahim seated in a blue baju kurung" widths={[400, 745]} sizes="(min-width: 900px) 360px, 80vw" loading="eager" fetchpriority="high" />
+      </div>
+    </div>
+  </header>
+
+  <section class="section">
+    <div class="container split">
+      <div class="prose">
+        <h2>Why skin health education matters</h2>
+        <p>
+          Eczema in babies, acne and pigmentation in women, and other common skin problems affect sleep, school, work and confidence. Families who understand these
+          conditions tend to seek help earlier and avoid products that make things worse.
+        </p>
+        <p>Topics Dr Kartini covers include:</p>
+        <ul>
+          <li>Caring for babies’ and children’s skin</li>
+          <li>Living with eczema and managing flares</li>
+          <li>Moisturisers and the skin barrier</li>
+          <li>Choosing skincare safely, and the risks of unregistered creams</li>
+          <li>Skin changes linked to hormones and pregnancy</li>
+          <li>Coping with a visible skin condition</li>
+        </ul>
+        <p>Some of these programmes have been run with support from skincare companies. Dr Kartini’s medical content does not recommend specific brands.</p>
+        <p><a href="/dermatology/childrens-skin-conditions/">Guide to children’s skin conditions</a></p>
+      </div>
+      <div class="pair">
+        <div class="photo photo--portrait"><Image src={childImg} alt="Dr Kartini applying wet wraps to a young child with eczema" width={480} height={600} fit="cover" /></div>
+        <div class="photo photo--portrait"><Image src={wrapImg} alt="Dr Kartini Farah Rahim in clinic scrubs" width={480} height={600} fit="cover" /></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt" aria-labelledby="edu-videos">
+    <div class="container">
+      <h2 id="edu-videos">Videos</h2>
+      <div class="grid grid--3">
+        {eduVideos.map((v) => <VideoCard video={v} />)}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container--narrow">
+      <Faq faqs={faqs} heading="Questions" />
+      <p class="section-foot"><a class="btn" href="/contact/">Invite Dr Kartini for a talk</a></p>
+    </div>
+  </section>
+</BaseLayout>
+<style>
+  .hero-photo {
+    max-width: 360px;
+    width: 100%;
+    justify-self: center;
+  }
+  .pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+</style>

@@ -1,0 +1,104 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Faq from '../../components/Faq.astro';
+import { pages } from '../../data/pages';
+import { affiliations } from '../../data/site';
+import { graph, webPageNode, faqNode, abs, ids } from '../../lib/schema';
+
+import speakImg from '../../assets/images/media/dr-kartini-speaking-at-health-event.jpg';
+import catImg from '../../assets/images/animal-welfare/dr-kartini-animal-rescuer-with-cat.jpg';
+import gasingImg from '../../assets/images/environment/save-bukit-gasing-community-advocacy.jpg';
+import kurungImg from '../../assets/images/portraits/dr-kartini-farah-rahim-baju-kurung-seated.jpg';
+import childImg from '../../assets/images/clinical/childrens-skin-care-dr-kartini.jpg';
+
+const meta = pages.community;
+const url = abs(meta.path);
+
+const faqs = [
+  {
+    q: 'What community work is Dr Kartini involved in?',
+    a: 'Dr Kartini is Vice-President of PEKA Malaysia, a board member of Filbert’s Foundation for Furry Friends, and a medical advisor to Malaysian patient support groups for eczema, hidradenitis suppurativa and ichthyosis. She also gives skin health talks for women and children through Empowerment Sentuhan.',
+  },
+  {
+    q: 'Does Dr Kartini give talks to schools and organisations?',
+    a: 'Yes. Dr Kartini gives talks on skin health, the environment and animal welfare to schools, universities, community groups and workplaces, in English and Bahasa Malaysia. Use the contact page to send an invitation.',
+  },
+];
+
+const schema = graph([
+  webPageNode({ url, type: 'CollectionPage', name: meta.title, description: meta.description, imageUrl: abs('/og/page/community.jpg'), about: { '@id': ids.person } }),
+  faqNode(url, faqs),
+]);
+
+const areas = [
+  { href: '/animal-welfare/', title: 'Animal welfare', img: catImg, alt: 'Dr Kartini holding a rescued cat', text: 'Rescuing cats and dogs, serving on the board of Filbert’s Foundation for Furry Friends, and pushing for humane stray animal management.' },
+  { href: '/community/environment/', title: 'Environment', img: gasingImg, alt: 'Community advocacy to protect Bukit Gasing forest', text: 'Vice-President of PEKA Malaysia, working on plastic waste, recycling and the protection of forests and wildlife.' },
+  { href: '/community/empowerment-sentuhan/', title: 'Empowerment Sentuhan', img: kurungImg, alt: 'Dr Kartini seated in a blue baju kurung', text: 'Skin health education for women, parents and children.' },
+  { href: '/dermatology/eczema/', title: 'Patient support groups', img: childImg, alt: 'Dr Kartini applying wet wraps to a young child with eczema', text: 'Medical advisor to groups for people with eczema, hidradenitis suppurativa and ichthyosis. Chair of National Skin Day, 2015 to 2017.' },
+];
+---
+<BaseLayout title={meta.title} description={meta.description} path={meta.path} ogImage="/og/page/community.jpg" schema={schema} crumbs={[{ name: 'Home', path: '/' }, { name: 'Community', path: meta.path }]}>
+  <header class="page-hero">
+    <div class="container split split--center">
+      <div>
+        <h1>Dr Kartini in the Community</h1>
+        <p class="lead">
+          Outside her clinics, Dr Kartini volunteers with animal welfare and environmental organisations, advises patient support groups, and gives talks on skin
+          health.
+        </p>
+      </div>
+      <div class="photo photo--landscape">
+        <Image src={speakImg} alt="Dr Kartini speaking at a community health event" widths={[500, 900]} sizes="(min-width: 900px) 440px, 90vw" loading="eager" fetchpriority="high" />
+      </div>
+    </div>
+  </header>
+
+  <section class="section">
+    <div class="container grid grid--2">
+      {
+        areas.map((a) => (
+          <article class="card card--link">
+            <div class="card__media">
+              <Image src={a.img} alt={a.alt} width={720} height={450} fit="cover" />
+            </div>
+            <h2 class="card-title">
+              <a class="stretched" href={a.href}>{a.title}</a>
+            </h2>
+            <p class="muted">{a.text}</p>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="section section--alt" aria-labelledby="roles-title">
+    <div class="container">
+      <h2 id="roles-title">Roles</h2>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th scope="col">Role</th><th scope="col">Organisation</th><th scope="col">Focus</th></tr>
+          </thead>
+          <tbody>
+            {affiliations.map((a) => <tr><td>{a.role}</td><td>{a.org}</td><td>{a.description}</td></tr>)}
+            <tr><td>Chairperson, 2015 to 2017</td><td>National Skin Day (Hari Kulit Kebangsaan)</td><td>Public awareness of skin disease in Malaysia.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container--narrow">
+      <Faq faqs={faqs} heading="Questions" />
+      <p class="section-foot"><a class="btn" href="/contact/">Invite Dr Kartini to speak</a></p>
+    </div>
+  </section>
+</BaseLayout>
+<style>
+  .card-title {
+    font-size: 1.25rem;
+    margin-bottom: 0.4rem;
+  }
+</style>

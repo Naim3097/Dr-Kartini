@@ -1,0 +1,182 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "astro",
+  "installCommand": "npm ci",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "trailingSlash": true,
+  "cleanUrls": false,
+  "redirects": [
+    {
+      "source": "/profession",
+      "destination": "/about-dr-kartini/",
+      "permanent": true
+    },
+    {
+      "source": "/qualifications-1",
+      "destination": "/credentials/",
+      "permanent": true
+    },
+    {
+      "source": "/clinic-hours",
+      "destination": "/appointments/",
+      "permanent": true
+    },
+    {
+      "source": "/beyond-medical-practice",
+      "destination": "/community/",
+      "permanent": true
+    },
+    {
+      "source": "/green-fingerrpint",
+      "destination": "/community/environment/",
+      "permanent": true
+    },
+    {
+      "source": "/green-fingerprint",
+      "destination": "/community/environment/",
+      "permanent": true
+    },
+    {
+      "source": "/paws-whiskers",
+      "destination": "/animal-welfare/",
+      "permanent": true
+    },
+    {
+      "source": "/women-empowerment",
+      "destination": "/community/empowerment-sentuhan/",
+      "permanent": true
+    },
+    {
+      "source": "/media-prsence",
+      "destination": "/media/",
+      "permanent": true
+    },
+    {
+      "source": "/media-presence",
+      "destination": "/media/",
+      "permanent": true
+    },
+    {
+      "source": "/print-media",
+      "destination": "/media/",
+      "permanent": true
+    },
+    {
+      "source": "/tv-and-socialmedia",
+      "destination": "/videos/",
+      "permanent": true
+    },
+    {
+      "source": "/qualifications",
+      "destination": "/articles/",
+      "permanent": true
+    },
+    {
+      "source": "/qualifications/categories/furry-friends-for-adoption-as-pets",
+      "destination": "/articles/category/animal-welfare/",
+      "permanent": true
+    },
+    {
+      "source": "/qualifications/categories/paws-whiskers",
+      "destination": "/articles/category/animal-welfare/",
+      "permanent": true
+    },
+    {
+      "source": "/qualifications/categories/events",
+      "destination": "/articles/category/animal-welfare/",
+      "permanent": true
+    },
+    {
+      "source": "/qualifications/categories/press-statements",
+      "destination": "/articles/category/press-statements/",
+      "permanent": true
+    },
+    {
+      "source": "/qualifications/categories/green-fingerprint",
+      "destination": "/articles/category/environment/",
+      "permanent": true
+    },
+    {
+      "source": "/qualifications/categories/women-empowerment",
+      "destination": "/community/empowerment-sentuhan/",
+      "permanent": true
+    },
+    {
+      "source": "/qualifications/categories/news-updates",
+      "destination": "/articles/",
+      "permanent": true
+    },
+    {
+      "source": "/blog-feed.xml",
+      "destination": "/rss.xml",
+      "permanent": true
+    },
+    {
+      "source": "/post/sembah-takzim-kepada-kebawah-duli-yang-maha-mulia-seri-paduka-baginda-yang-di-pertuan-agong",
+      "destination": "/articles/sembah-takzim-kempen-anti-buli-haiwan/",
+      "permanent": true
+    },
+    {
+      "source": "/post/:slug",
+      "destination": "/articles/:slug/",
+      "permanent": true
+    },
+    {
+      "source": "/sitemap.xml",
+      "destination": "/sitemap-index.xml",
+      "permanent": true
+    },
+    {
+      "source": "/pages-sitemap.xml",
+      "destination": "/sitemap-index.xml",
+      "permanent": true
+    },
+    {
+      "source": "/blog-posts-sitemap.xml",
+      "destination": "/sitemap-index.xml",
+      "permanent": true
+    },
+    {
+      "source": "/blog-categories-sitemap.xml",
+      "destination": "/sitemap-index.xml",
+      "permanent": true
+    }
+  ],
+  "headers": [
+    {
+      "source": "/_astro/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        },
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=31536000; includeSubDomains; preload"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=()"
+        }
+      ]
+    }
+  ]
+}

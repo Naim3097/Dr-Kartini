@@ -1,0 +1,223 @@
+---
+import { nav, person } from '../data/site';
+const current = Astro.url.pathname;
+const isActive = (href: string, children?: { href: string }[]) =>
+  href === '/' ? current === '/' : current.startsWith(href) || !!children?.some((c) => current.startsWith(c.href));
+---
+<header class="site-header">
+  <div class="container bar">
+    <a class="brand" href="/" aria-label={`${person.name}, ${person.jobTitle}, home page`}>
+      <span class="brand__name">Dr Kartini Farah Rahim</span>
+      <span class="brand__role">Consultant Dermatologist</span>
+    </a>
+
+    <nav class="nav" aria-label="Main">
+      <ul class="nav__list">
+        {
+          nav.map((item) => (
+            <li class:list={['nav__item', { 'has-menu': item.children }]}>
+              <a href={item.href} class:list={['nav__link', { active: isActive(item.href, item.children) }]} aria-current={current === item.href ? 'page' : undefined}>
+                {item.label}
+              </a>
+              {item.children && (
+                <ul class="menu">
+                  {item.children.map((c) => (
+                    <li>
+                      <a href={c.href} aria-current={current === c.href ? 'page' : undefined}>{c.label}</a>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <a class="btn btn--sm header-cta" href="/appointments/" data-track="appointment_cta">Book appointment</a>
+
+    <details class="mobile">
+      <summary><span class="mobile__label">Menu</span></summary>
+      <div class="mobile__panel">
+        <ul class="mobile__list">
+          {
+            nav.map((item) => (
+              <li>
+                <a href={item.href} class="mobile__top">{item.label}</a>
+                {item.children && (
+                  <ul class="mobile__sub">
+                    {item.children
+                      .filter((c) => c.href !== item.href)
+                      .map((c) => (
+                        <li>
+                          <a href={c.href}>{c.label}</a>
+                        </li>
+                      ))}
+                  </ul>
+                )}
+              </li>
+            ))
+          }
+          <li><a href="/faq/" class="mobile__top">FAQ</a></li>
+          <li><a href="/contact/" class="mobile__top">Contact</a></li>
+        </ul>
+        <a class="btn" href="/appointments/" data-track="appointment_cta">Book appointment</a>
+      </div>
+    </details>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+  }
+  .bar {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    min-height: 4.25rem;
+  }
+  .brand {
+    display: flex;
+    flex-direction: column;
+    margin-right: auto;
+    color: var(--text);
+    text-decoration: none;
+    line-height: 1.2;
+  }
+  .brand__name {
+    font-size: 1.1875rem;
+    font-weight: 700;
+    letter-spacing: -0.005em;
+  }
+  .brand__role {
+    font-size: 0.875rem;
+    color: var(--text-3);
+  }
+  .nav__list {
+    display: flex;
+    gap: 0.25rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .nav__item {
+    position: relative;
+  }
+  .nav__link {
+    display: block;
+    padding: 1.4rem 0.7rem;
+    color: var(--text-2);
+    font-weight: 600;
+    font-size: 0.975rem;
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+  }
+  .nav__link:hover {
+    color: var(--text);
+  }
+  .nav__link.active {
+    color: var(--brand);
+    border-bottom-color: var(--brand);
+  }
+  .menu {
+    position: absolute;
+    top: calc(100% + 1px);
+    left: 0;
+    min-width: 14rem;
+    list-style: none;
+    margin: 0;
+    padding: 0.4rem 0;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 0 0 var(--radius) var(--radius);
+    box-shadow: 0 6px 16px rgba(28, 35, 41, 0.08);
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.12s ease, visibility 0.12s;
+  }
+  .has-menu:hover .menu,
+  .has-menu:focus-within .menu {
+    visibility: visible;
+    opacity: 1;
+  }
+  .menu a {
+    display: block;
+    padding: 0.45rem 1rem;
+    color: var(--text);
+    font-size: 0.95rem;
+    text-decoration: none;
+  }
+  .menu a:hover,
+  .menu a[aria-current] {
+    background: var(--bg-alt);
+    color: var(--brand);
+  }
+  .mobile {
+    display: none;
+  }
+  @media (max-width: 1080px) {
+    .nav,
+    .header-cta {
+      display: none;
+    }
+    .mobile {
+      display: block;
+    }
+  }
+  .mobile summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 0.45rem 0.9rem;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+  .mobile summary::-webkit-details-marker {
+    display: none;
+  }
+  .mobile[open] summary {
+    border-color: var(--brand);
+    color: var(--brand);
+  }
+  .mobile__panel {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    max-height: calc(100dvh - 4.25rem);
+    overflow-y: auto;
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 0.5rem var(--gutter) 1.5rem;
+  }
+  .mobile__list {
+    list-style: none;
+    margin: 0 0 1.25rem;
+    padding: 0;
+  }
+  .mobile__top {
+    display: block;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .mobile__sub {
+    list-style: none;
+    margin: 0;
+    padding: 0.25rem 0 0.5rem 1rem;
+  }
+  .mobile__sub a {
+    display: block;
+    padding: 0.35rem 0;
+    color: var(--text-2);
+    text-decoration: none;
+  }
+</style>

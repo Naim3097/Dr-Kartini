@@ -1,0 +1,124 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import VideoEmbed from '../../components/VideoEmbed.astro';
+import VideoCard from '../../components/VideoCard.astro';
+import KeyFacts from '../../components/KeyFacts.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { videos, getConditions, type Video } from '../../lib/content';
+import { graph, webPageNode, videoNode, abs } from '../../lib/schema';
+
+export function getStaticPaths() {
+  return videos.map((v) => ({ params: { slug: v.slug }, props: { video: v } }));
+}
+
+const { video } = Astro.props as { video: Video };
+const path = `/videos/${video.slug}/`;
+const url = abs(path);
+const conditions = await getConditions();
+const related = video.relatedConditions.map((id) => conditions.find((c) => c.id === id)).filter(Boolean);
+const more = videos.filter((v) => v.id !== video.id && v.category === video.category).slice(0, 3);
+const mins = Math.floor(video.seconds / 60);
+const secs = video.seconds % 60;
+const uploaded = new Date(video.uploadDate);
+
+const shortTitle = (t: string) => {
+  let s = t.length > 60 ? t.replace(/\s*\([^)]*\)\s*$/, '') : t;
+  if (s.length > 60) s = s.slice(0, 58).replace(/\s+\S*$/, '') + '…';
+  return s.length <= 46 ? `${s} | Dr Kartini` : s;
+};
+const title = shortTitle(video.title);
+const description = video.description.length > 160 ? video.description.slice(0, 157).trimEnd() + '…' : video.description;
+
+const schema = graph([
+  webPageNode({ url, type: 'ItemPage', name: video.title, description: video.description, imageUrl: `https://i.ytimg.com/vi/${video.id}/hqdefault.jpg`, mainEntity: { '@id': `${url}#video` }, inLanguage: video.lang === 'ms' ? 'ms-MY' : 'en-MY' }),
+  videoNode({ ...video, pageUrl: url }),
+]);
+---
+<BaseLayout
+  title={title}
+  description={description}
+  path={path}
+  ogImage={`/og/videos/${video.slug}.jpg`}
+  ogType="video.other"
+  video={{ id: video.id, seconds: video.seconds, uploadDate: video.uploadDate }}
+  schema={schema}
+  crumbs={[
+    { name: 'Home', path: '/' },
+    { name: 'Videos', path: '/videos/' },
+    { name: video.title.length > 50 ? video.title.slice(0, 47) + '…' : video.title, path },
+  ]}
+  preconnectYouTube
+>
+  <article class="section section--tight">
+    <div class="container--narrow">
+      <h1 class="v-title">{video.title}</h1>
+      <VideoEmbed id={video.id} title={video.title} eager />
+      <p class="lead v-desc" lang={video.lang === 'ms' ? 'ms' : undefined}>{video.description}</p>
+      <KeyFacts
+        facts={[
+          { label: 'Featuring', value: 'Dr Kartini Farah Rahim, Consultant Dermatologist' },
+          { label: 'Language', value: video.lang === 'ms' ? 'Bahasa Malaysia' : 'English' },
+          { label: 'Duration', value: `${mins} min ${secs} s` },
+          { label: 'Published', value: uploaded.toLocaleDateString('en-MY', { day: 'numeric', month: 'long', year: 'numeric' }) },
+          { label: 'Channel', value: video.channel },
+          { label: 'Topics', value: video.topics.join(', ') },
+        ]}
+      />
+      {
+        related.length > 0 && (
+          <div class="related">
+            <h2>Related condition guides</h2>
+            <ul>
+              {related.map((c) => (
+                <li>
+                  <a href={`/dermatology/${c!.id}/`}>{c!.data.title}</a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )
+      }
+      <p class="yt"><a href={`https://www.youtube.com/watch?v=${video.id}`} target="_blank" rel="noopener">Watch on YouTube</a></p>
+      {video.category !== 'animal-welfare' && <p class="notice">Videos are general education and do not replace a personal consultation.</p>}
+    </div>
+  </article>
+
+  {
+    more.length > 0 && (
+      <section class="section section--alt">
+        <div class="container">
+          <h2>More videos</h2>
+          <div class="grid grid--3">
+            {more.map((v) => (
+              <VideoCard video={v} />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+  {video.category !== 'animal-welfare' && <CtaBand />}
+</BaseLayout>
+<style>
+  .v-title {
+    font-size: clamp(1.75rem, 1.4rem + 1.4vw, 2.375rem);
+    margin-bottom: 1.25rem;
+  }
+  .v-desc {
+    margin-top: 1.25rem;
+    margin-bottom: 1.75rem;
+  }
+  .related {
+    margin-top: 2rem;
+  }
+  .related h2 {
+    font-size: 1.125rem;
+  }
+  .related ul {
+    padding-left: 1.2rem;
+  }
+  .yt {
+    margin-top: 1.5rem;
+    font-weight: 600;
+  }
+</style>

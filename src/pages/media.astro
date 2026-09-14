@@ -1,0 +1,161 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import VideoCard from '../components/VideoCard.astro';
+import { pages } from '../data/pages';
+import { clippings, tvAppearances } from '../data/media';
+import { videos } from '../lib/content';
+import { graph, webPageNode, abs, ids } from '../lib/schema';
+import tvImg from '../assets/images/media/dr-kartini-tv-studio-doctors-programme.jpg';
+
+const clipImages = import.meta.glob<{ default: ImageMetadata }>('../assets/images/clippings/*.jpg', { eager: true });
+const clipImg = (file: string) => clipImages[`../assets/images/clippings/${file}`]?.default;
+
+const meta = pages.media;
+const url = abs(meta.path);
+const tvVideos = videos.filter((v) => v.category === 'media');
+const fmtDate = (d?: string) => {
+  if (!d) return '';
+  const date = new Date(d.length === 7 ? `${d}-01` : d);
+  return d.length === 7
+    ? date.toLocaleDateString('en-MY', { month: 'long', year: 'numeric' })
+    : date.toLocaleDateString('en-MY', { day: 'numeric', month: 'long', year: 'numeric' });
+};
+const roleLabel = { quoted: 'Interview', author: 'Written by Dr Kartini', profiled: 'Profile', named: 'News' } as const;
+
+const schema = graph([
+  webPageNode({ url, type: 'CollectionPage', name: meta.title, description: meta.description, imageUrl: abs('/og/page/media.jpg'), about: { '@id': ids.person } }),
+  {
+    '@type': 'ItemList',
+    '@id': `${url}#coverage`,
+    name: 'Media coverage of Dr Kartini Farah Rahim',
+    numberOfItems: clippings.length,
+    itemListElement: clippings.map((c, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      item: {
+        '@type': c.role === 'author' ? 'Article' : 'NewsArticle',
+        headline: c.title,
+        ...(c.outlet ? { publisher: { '@type': 'Organization', name: c.outlet } } : {}),
+        ...(c.date ? { datePublished: c.date } : {}),
+        ...(c.author ? { author: { '@type': 'Person', name: c.author } } : c.role === 'author' ? { author: { '@id': ids.person } } : {}),
+        ...(c.role === 'author' ? {} : { mentions: { '@id': ids.person } }),
+        inLanguage: c.lang === 'ms' ? 'ms' : 'en',
+        abstract: c.summary,
+        ...(c.url ? { url: c.url } : {}),
+      },
+    })),
+  },
+]);
+---
+<BaseLayout title={meta.title} description={meta.description} path={meta.path} ogImage="/og/page/media.jpg" schema={schema} crumbs={[{ name: 'Home', path: '/' }, { name: 'Media', path: meta.path }]} preconnectYouTube>
+  <header class="page-hero">
+    <div class="container split split--center">
+      <div>
+        <h1>Media</h1>
+        <p class="lead">
+          Dr Kartini appears in English and Malay media as a consultant dermatologist, and comments on animal welfare and environmental issues.
+        </p>
+        <p class="btn-row"><a class="btn" href="/press/">Media enquiries</a> <a class="btn btn--secondary" href="/videos/">Videos</a></p>
+      </div>
+      <div class="photo photo--landscape">
+        <Image src={tvImg} alt="Dr Kartini on the set of a television health programme" widths={[500, 900]} sizes="(min-width: 900px) 440px, 90vw" loading="eager" fetchpriority="high" />
+      </div>
+    </div>
+  </header>
+
+  <section class="section" aria-labelledby="tv-title">
+    <div class="container">
+      <h2 id="tv-title">Television</h2>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th scope="col">Programme</th><th scope="col">Network</th><th scope="col">Topic</th><th scope="col">Language</th></tr>
+          </thead>
+          <tbody>
+            {tvAppearances.map((t) => <tr><td>{t.programme}</td><td>{t.network}</td><td>{t.topic}</td><td>{t.lang === 'ms' ? 'Bahasa Malaysia' : 'English'}</td></tr>)}
+          </tbody>
+        </table>
+      </div>
+      <div class="grid grid--3 tv-videos">
+        {tvVideos.map((v) => <VideoCard video={v} />)}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt" aria-labelledby="print-title">
+    <div class="container">
+      <div class="section-head">
+        <h2 id="print-title">Newspapers and magazines</h2>
+        <p class="muted">Features, interviews, letters and articles by Dr Kartini. Select a clipping to view it full size.</p>
+      </div>
+      <ul class="clips">
+        {
+          clippings.map((c) => (
+            <li lang={c.lang === 'ms' ? 'ms' : undefined}>
+              {clipImg(c.image) && (
+                <a class="clips__img" href={clipImg(c.image)!.src} target="_blank" rel="noopener" aria-label={`View clipping: ${c.title}`}>
+                  <Image src={clipImg(c.image)!} alt={`Clipping: ${c.title}`} width={200} height={250} fit="cover" position="top" />
+                </a>
+              )}
+              <div>
+                <p class="card__label">
+                  {[c.outlet, fmtDate(c.date), roleLabel[c.role]].filter(Boolean).join(', ')}
+                </p>
+                <h3>{c.isHeadline ? `“${c.title}”` : c.title}</h3>
+                <p>{c.summary}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container--narrow">
+      <h2>Social media</h2>
+      <p>
+        Dr Kartini posts about skin health, animal welfare, the environment and community causes. Links to her LinkedIn, Facebook and YouTube accounts are in the
+        footer of every page.
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+<style>
+  .tv-videos {
+    margin-top: 2rem;
+  }
+  .clips {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0 2.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 30rem), 1fr));
+  }
+  .clips li {
+    display: flex;
+    gap: 1.25rem;
+    padding: 1.25rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .clips__img {
+    flex: none;
+    width: 90px;
+    align-self: flex-start;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    background: var(--white);
+  }
+  .clips h3 {
+    font-size: 1.0625rem;
+    margin-bottom: 0.3rem;
+  }
+  .clips p:last-child {
+    margin: 0;
+    color: var(--text-2);
+    font-size: 0.975rem;
+  }
+</style>

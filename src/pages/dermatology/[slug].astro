@@ -1,0 +1,234 @@
+---
+import { render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import KeyFacts from '../../components/KeyFacts.astro';
+import Faq from '../../components/Faq.astro';
+import Sources from '../../components/Sources.astro';
+import AuthorBox from '../../components/AuthorBox.astro';
+import ReviewByline from '../../components/ReviewByline.astro';
+import MedicalDisclaimer from '../../components/MedicalDisclaimer.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import VideoCard from '../../components/VideoCard.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import { getConditions, getArticles, videosFor, readingMinutes, isoDate } from '../../lib/content';
+import { graph, webPageNode, medicalConditionNode, faqNode, abs } from '../../lib/schema';
+import { whatsappHref } from '../../lib/whatsapp';
+
+export async function getStaticPaths() {
+  const conditions = await getConditions();
+  return conditions.map((c) => ({ params: { slug: c.id }, props: { condition: c, all: conditions } }));
+}
+
+const { condition, all } = Astro.props;
+const d = condition.data;
+const { Content, headings } = await render(condition);
+const path = `/dermatology/${condition.id}/`;
+const url = abs(path);
+const ogImage = `/og/dermatology/${condition.id}.jpg`;
+const toc = headings.filter((h) => h.depth === 2);
+const { words, minutes } = readingMinutes(condition.body);
+
+const related = d.relatedConditions.map((id) => all.find((c) => c.id === id)).filter(Boolean);
+const articles = (await getArticles()).filter((a) => d.relatedArticles.includes(a.id) || a.data.relatedConditions.includes(condition.id)).slice(0, 3);
+const vids = videosFor(d.relatedVideos);
+const urgent = ['blistering-disorders', 'skin-allergies'].includes(condition.id);
+const topic = d.navTitle.toLowerCase();
+
+const schema = graph([
+  webPageNode({
+    url,
+    type: 'MedicalWebPage',
+    name: d.metaTitle,
+    description: d.metaDescription,
+    imageUrl: abs(ogImage),
+    datePublished: isoDate(d.datePublished),
+    dateModified: isoDate(d.lastReviewed),
+    lastReviewed: isoDate(d.lastReviewed),
+    reviewed: true,
+    about: { '@id': `${url}#condition` },
+    mainEntity: { '@id': `${url}#condition` },
+    speakable: ['h1', '.condition-summary'],
+    medicalAudience: true,
+  }),
+  medicalConditionNode({
+    url,
+    name: d.title,
+    alternateNames: d.alternateNames,
+    description: d.summary,
+    wikipedia: d.wikipedia,
+    symptoms: d.symptoms,
+    treatments: d.treatments,
+  }),
+  faqNode(url, d.faqs),
+]);
+---
+<BaseLayout
+  title={d.metaTitle}
+  description={d.metaDescription}
+  path={path}
+  ogImage={ogImage}
+  ogImageAlt={`${d.title}: patient guide by Dr Kartini Farah Rahim, Consultant Dermatologist`}
+  schema={schema}
+  crumbs={[
+    { name: 'Home', path: '/' },
+    { name: 'Dermatology', path: '/dermatology/' },
+    { name: d.navTitle, path },
+  ]}
+  article={{ publishedTime: d.datePublished.toISOString(), modifiedTime: d.lastReviewed.toISOString(), section: 'Dermatology', tags: d.targetKeywords }}
+  ogType="article"
+  preconnectYouTube={vids.length > 0}
+>
+  <header class="page-hero">
+    <div class="container--wide">
+      <h1>{d.title}</h1>
+      {d.malayName && d.malayName.toLowerCase() !== d.navTitle.toLowerCase() && <p class="malay">In Malay: {d.malayName}</p>}
+      <p class="lead condition-summary">{d.summary}</p>
+      <div class="page-hero__meta">
+        <ReviewByline mode="reviewer" published={d.datePublished} reviewed={d.lastReviewed} readingMinutes={minutes} />
+      </div>
+      <div class="btn-row">
+        <a class="btn" href="/appointments/" data-track="appointment_cta">Make an appointment</a>
+        <a class="btn btn--secondary" href={whatsappHref(path, topic)} target="_blank" rel="noopener" data-track="whatsapp_click">WhatsApp Dr Kartini</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="section">
+    <div class="container article-layout">
+      <div>
+        <KeyFacts facts={d.keyFacts} heading="At a glance" />
+
+        {
+          d.whenToSee.length > 0 && (
+            <section class:list={['notice', 'when', { 'notice--urgent': urgent }]} aria-labelledby="when-title">
+              <h2 id="when-title">When to see a doctor</h2>
+              <ul>
+                {d.whenToSee.map((w) => (
+                  <li>{w}</li>
+                ))}
+              </ul>
+            </section>
+          )
+        }
+
+        <article class="prose body" data-words={words}>
+          <Content />
+        </article>
+
+        {
+          vids.length > 0 && (
+            <section class="block" aria-labelledby="vids-title">
+              <h2 id="vids-title">Videos</h2>
+              <div class="grid grid--2">
+                {vids.map((v) => (
+                  <VideoCard video={v} />
+                ))}
+              </div>
+            </section>
+          )
+        }
+
+        <div class="block">
+          <Faq faqs={d.faqs} heading="Frequently asked questions" />
+        </div>
+        <Sources sources={d.sources} />
+        <AuthorBox />
+        <MedicalDisclaimer urgent={urgent} />
+      </div>
+
+      <aside class="article-aside">
+        {
+          toc.length > 0 && (
+            <nav class="aside-block" aria-label="On this page">
+              <h2>On this page</h2>
+              <ul>
+                {toc.map((h) => (
+                  <li>
+                    <a href={`#${h.slug}`}>{h.text}</a>
+                  </li>
+                ))}
+                {d.faqs.length > 0 && (
+                  <li>
+                    <a href="#faq-title">Frequently asked questions</a>
+                  </li>
+                )}
+              </ul>
+            </nav>
+          )
+        }
+        {
+          related.length > 0 && (
+            <nav class="aside-block" aria-label="Related conditions">
+              <h2>Related conditions</h2>
+              <ul>
+                {related.map((r) => (
+                  <li>
+                    <a href={`/dermatology/${r!.id}/`}>{r!.data.navTitle}</a>
+                  </li>
+                ))}
+                <li>
+                  <a href="/dermatology/">All conditions</a>
+                </li>
+              </ul>
+            </nav>
+          )
+        }
+      </aside>
+    </div>
+  </div>
+
+  {
+    articles.length > 0 && (
+      <section class="section section--alt" aria-labelledby="rel-articles">
+        <div class="container">
+          <h2 id="rel-articles">Related articles</h2>
+          <div class="grid grid--3">
+            {articles.map((a) => (
+              <ArticleCard article={a} />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <CtaBand topic={topic} />
+</BaseLayout>
+
+<style>
+  .container--wide {
+    width: min(100% - 2 * var(--gutter), var(--max));
+    margin-inline: auto;
+  }
+  .page-hero h1 {
+    max-width: 30ch;
+  }
+  .malay {
+    margin: -0.25rem 0 0.75rem;
+    color: var(--text-3);
+  }
+  .condition-summary {
+    max-width: 70ch;
+  }
+  .page-hero .btn-row {
+    margin-top: 1.5rem;
+  }
+  .when {
+    margin: 2rem 0;
+  }
+  .when h2 {
+    font-size: 1.0625rem;
+    margin-bottom: 0.5rem;
+    color: inherit;
+  }
+  .when ul {
+    margin: 0;
+    padding-left: 1.2rem;
+  }
+  .when li + li {
+    margin-top: 0.3rem;
+  }
+  .block {
+    margin-top: 2.5rem;
+  }
+</style>

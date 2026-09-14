@@ -1,0 +1,32 @@
+{
+  "name": "drkartini-website",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "audit": "node scripts/seo-audit.mjs",
+    "build:audit": "astro build && node scripts/seo-audit.mjs",
+    "icons": "node scripts/icons.mjs"
+  },
+  "dependencies": {
+    "@astrojs/rss": "^4.0.19",
+    "@astrojs/sitemap": "^3.7.4",
+    "@fontsource/source-sans-3": "^5.3.0",
+    "@resvg/resvg-js": "^2.6.2",
+    "astro": "^7.3.2",
+    "satori": "^0.33.4",
+    "sharp": "^0.35.4"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "typescript": "^6.0.3",
+    "yaml": "^2.9.1"
+  },
+  "engines": {
+    "node": "24.x"
+  }
+}

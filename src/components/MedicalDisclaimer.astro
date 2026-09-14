@@ -1,0 +1,12 @@
+---
+interface Props {
+  urgent?: boolean;
+}
+const { urgent = false } = Astro.props;
+---
+<div class:list={['notice', { 'notice--urgent': urgent }]} role="note">
+  <strong>Medical information notice.</strong> This page offers general education written for patients in Malaysia. It is not a diagnosis or a substitute
+  for a consultation with a qualified doctor who can examine you. If you have severe symptoms, such as swelling of the lips, tongue or throat, difficulty
+  breathing, widespread blistering or a rapidly spreading painful rash with fever, go to the nearest emergency department or call 999.
+  <a href="/editorial-policy/">Read our editorial and medical review policy</a>.
+</div>

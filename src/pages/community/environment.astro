@@ -1,0 +1,135 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Faq from '../../components/Faq.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import { pages } from '../../data/pages';
+import { getArticles } from '../../lib/content';
+import { graph, webPageNode, faqNode, abs, ids } from '../../lib/schema';
+
+import portrait from '../../assets/images/portraits/dr-kartini-farah-rahim-portrait-dark.jpg';
+import gasingImg from '../../assets/images/environment/save-bukit-gasing-community-advocacy.jpg';
+import containersImg from '../../assets/images/environment/reusable-food-containers.jpg';
+import cupImg from '../../assets/images/environment/plastic-lining-in-paper-cup.jpg';
+
+const meta = pages.environment;
+const url = abs(meta.path);
+const articles = (await getArticles()).filter((a) => a.data.category === 'environment');
+
+const faqs = [
+  {
+    q: 'What is PEKA Malaysia?',
+    a: 'Pertubuhan Pelindung Khazanah Alam Malaysia (PEKA) is a Malaysian non-governmental organisation that works to protect the country’s forests, wildlife and environment through advocacy and public education. Dr Kartini Farah Rahim is its Vice-President.',
+  },
+  {
+    q: 'What environmental issues does Dr Kartini speak about?',
+    a: 'Dr Kartini speaks and writes about single-use plastics and microplastics, waste separation at source, urban forests, biodiversity loss, and the links between the environment and human health.',
+  },
+  {
+    q: 'Why does a dermatologist campaign on plastics?',
+    a: 'As a doctor, Dr Kartini is concerned about plastic particles and chemicals entering air, water and food. She is also concerned about plastic waste in landfills and the sea. She brings her own reusable containers to the clinic.',
+  },
+];
+
+const schema = graph([
+  webPageNode({
+    url,
+    type: 'WebPage',
+    name: meta.title,
+    description: meta.description,
+    imageUrl: abs('/og/page/environment.jpg'),
+    about: [{ '@id': ids.person }, { '@type': 'Organization', name: 'Pertubuhan Pelindung Khazanah Alam Malaysia (PEKA)' }],
+  }),
+  faqNode(url, faqs),
+]);
+---
+<BaseLayout title={meta.title} description={meta.description} path={meta.path} ogImage="/og/page/environment.jpg" schema={schema} crumbs={[{ name: 'Home', path: '/' }, { name: 'Community', path: '/community/' }, { name: 'Environment', path: meta.path }]}>
+  <header class="page-hero">
+    <div class="container split split--center">
+      <div>
+        <h1>Environmental work with PEKA Malaysia</h1>
+        <p class="lead">
+          Dr Kartini Farah Rahim is Vice-President of Pertubuhan Pelindung Khazanah Alam Malaysia (PEKA). She gives talks and writes about plastic pollution,
+          recycling and the protection of Malaysia’s forests and wildlife.
+        </p>
+      </div>
+      <div class="photo photo--portrait hero-photo">
+        <Image src={portrait} alt="Dr Kartini Farah Rahim, Vice-President of PEKA Malaysia" widths={[400, 800]} sizes="(min-width: 900px) 360px, 80vw" loading="eager" fetchpriority="high" />
+      </div>
+    </div>
+  </header>
+
+  <section class="section">
+    <div class="container split">
+      <div class="prose">
+        <h2>Her work at PEKA</h2>
+        <p>
+          Dr Kartini gives talks to schools, universities and local organisations on deforestation, pollution and biodiversity loss. She also comments publicly on
+          environmental policy, including Selangor’s plans to cut single-use plastics.
+        </p>
+
+        <h2>What she campaigns for</h2>
+        <ul>
+          <li><strong>Less single-use plastic.</strong> A permanent, minister-led task force and an enforceable national framework to reduce Malaysia’s estimated 2,000 to 3,000 tonnes of plastic waste a day.</li>
+          <li><strong>Waste separation at source.</strong> Household sorting and recycling, following models such as South Korea’s, rather than relying on incineration.</li>
+          <li><strong>Urban forests.</strong> Protecting green areas such as Bukit Gasing for residents and wildlife.</li>
+          <li><strong>Everyday habits.</strong> Reusable bottles and containers, no plastic cutlery or straws, and support for restaurants that accept customers’ own containers.</li>
+        </ul>
+      </div>
+      <div class="figures">
+        <figure>
+          <div class="photo photo--landscape"><Image src={gasingImg} alt="Community members holding signs to save Bukit Gasing forest in Petaling Jaya" widths={[500, 900]} sizes="(min-width: 900px) 420px, 90vw" /></div>
+          <figcaption>Residents calling for the protection of Bukit Gasing, Petaling Jaya.</figcaption>
+        </figure>
+        <div class="pair">
+          <figure>
+            <div class="photo photo--portrait"><Image src={containersImg} alt="Dr Kartini's reusable metal food container and drink bottle" width={400} height={500} fit="cover" /></div>
+            <figcaption>Dr Kartini’s reusable containers.</figcaption>
+          </figure>
+          <figure>
+            <div class="photo photo--portrait"><Image src={cupImg} alt="Thin plastic lining peeled from a paper cup" width={400} height={500} fit="cover" /></div>
+            <figcaption>The plastic lining inside a paper cup.</figcaption>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {
+    articles.length > 0 && (
+      <section class="section section--alt" aria-labelledby="env-articles">
+        <div class="container">
+          <h2 id="env-articles">Articles on the environment</h2>
+          <div class="grid grid--3">
+            {articles.map((a) => (
+              <ArticleCard article={a} />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="section">
+    <div class="container--narrow">
+      <Faq faqs={faqs} heading="Questions" />
+      <p class="section-foot btn-row"><a class="btn" href="/contact/">Invite Dr Kartini to speak</a> <a class="btn btn--secondary" href="/press/">Media enquiries</a></p>
+    </div>
+  </section>
+</BaseLayout>
+<style>
+  .hero-photo {
+    max-width: 360px;
+    width: 100%;
+    justify-self: center;
+  }
+  .figures {
+    display: grid;
+    gap: 1.25rem;
+  }
+  .pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+</style>

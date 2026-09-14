@@ -1,0 +1,241 @@
+---
+import { render } from 'astro:content';
+import { Image } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Faq from '../../components/Faq.astro';
+import Sources from '../../components/Sources.astro';
+import AuthorBox from '../../components/AuthorBox.astro';
+import ReviewByline from '../../components/ReviewByline.astro';
+import MedicalDisclaimer from '../../components/MedicalDisclaimer.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import VideoCard from '../../components/VideoCard.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import { getArticles, getConditions, videosFor, readingMinutes, isoDate, categoryImage, categoryImageAlt, categoryLabel } from '../../lib/content';
+import { graph, webPageNode, articleNode, faqNode, abs } from '../../lib/schema';
+import { articleCategories } from '../../data/site';
+
+export async function getStaticPaths() {
+  const articles = await getArticles();
+  return articles.map((a) => ({ params: { slug: a.id }, props: { article: a, all: articles } }));
+}
+
+const { article, all } = Astro.props;
+const d = article.data;
+const { Content, headings } = await render(article);
+const path = `/articles/${article.id}/`;
+const url = abs(path);
+const ogImage = `/og/articles/${article.id}.jpg`;
+const toc = headings.filter((h) => h.depth === 2);
+const { words, minutes } = readingMinutes(article.body);
+const isMedical = d.category === 'dermatology';
+const isMalay = d.lang === 'ms';
+const hero = d.heroImage ?? categoryImage[d.category];
+const modified = d.dateModified ?? d.datePublished;
+
+const conditions = await getConditions();
+const relConditions = d.relatedConditions.map((id) => conditions.find((c) => c.id === id)).filter(Boolean);
+const relArticles = [
+  ...d.relatedArticles.map((id) => all.find((a) => a.id === id)).filter(Boolean),
+  ...all.filter((a) => a.id !== article.id && a.data.category === d.category && !d.relatedArticles.includes(a.id)),
+].slice(0, 3);
+const vids = videosFor(d.relatedVideos);
+
+const schema = graph([
+  webPageNode({
+    url,
+    type: isMedical ? 'MedicalWebPage' : 'WebPage',
+    name: d.metaTitle,
+    description: d.metaDescription,
+    imageUrl: abs(ogImage),
+    datePublished: isoDate(d.datePublished),
+    dateModified: isoDate(modified),
+    ...(isMedical && d.medicallyReviewed ? { lastReviewed: isoDate(modified), reviewed: true } : {}),
+    speakable: ['h1', '.key-takeaways'],
+    inLanguage: isMalay ? 'ms-MY' : 'en-MY',
+    medicalAudience: isMedical,
+    about: relConditions.map((c) => ({ '@id': `${abs(`/dermatology/${c!.id}/`)}#condition` })),
+  }),
+  articleNode({
+    url,
+    headline: d.title,
+    description: d.metaDescription,
+    imageUrl: abs(ogImage),
+    datePublished: d.datePublished.toISOString(),
+    dateModified: modified.toISOString(),
+    keywords: [...d.tags, ...d.targetKeywords],
+    section: categoryLabel(d.category),
+    inLanguage: isMalay ? 'ms-MY' : 'en-MY',
+    wordCount: words,
+    medical: isMedical,
+    citations: d.sources,
+  }),
+  faqNode(url, d.faqs),
+]);
+
+const labels = isMalay
+  ? { takeaways: 'Perkara utama', toc: 'Kandungan', faq: 'Soalan lazim', related: 'Bacaan berkaitan', videos: 'Tonton video' }
+  : { takeaways: 'Key takeaways', toc: 'On this page', faq: 'Frequently asked questions', related: 'Related reading', videos: 'Watch Dr Kartini' };
+---
+<BaseLayout
+  title={d.metaTitle}
+  description={d.metaDescription}
+  path={path}
+  ogImage={ogImage}
+  ogImageAlt={d.heroAlt ?? d.title}
+  ogType="article"
+  lang={d.lang}
+  schema={schema}
+  crumbs={[
+    { name: 'Home', path: '/' },
+    { name: 'Articles', path: '/articles/' },
+    { name: articleCategories[d.category].label, path: `/articles/category/${d.category}/` },
+    { name: d.title.length > 60 ? d.title.slice(0, 57) + '…' : d.title, path },
+  ]}
+  article={{ publishedTime: d.datePublished.toISOString(), modifiedTime: modified.toISOString(), section: categoryLabel(d.category), tags: d.tags }}
+  preconnectYouTube={vids.length > 0}
+>
+  <article>
+    <header class="article-hero">
+      <div class="container"><div class="article-head">
+        <p class="category"><a href={`/articles/category/${d.category}/`}>{categoryLabel(d.category)}</a></p>
+        <h1>{d.title}</h1>
+        <p class="lead">{d.summary}</p>
+        <ReviewByline mode={isMedical && d.medicallyReviewed ? 'reviewer' : 'author'} published={d.datePublished} updated={d.dateModified} readingMinutes={minutes} />
+      </div></div>
+      <figure class="container hero-figure">
+        <div class="photo">
+          <Image src={hero} alt={d.heroAlt ?? categoryImageAlt[d.category]} widths={[640, 960, 1280]} sizes="(min-width: 800px) 760px, 100vw" loading="eager" fetchpriority="high" />
+        </div>
+      </figure>
+    </header>
+
+    <div class="section section--tight">
+      <div class="container article-layout">
+        <div>
+          {
+            d.keyTakeaways.length > 0 && (
+              <section class="summary-box key-takeaways" aria-labelledby="kt-title">
+                <h2 id="kt-title">{labels.takeaways}</h2>
+                <ul>
+                  {d.keyTakeaways.map((k) => (
+                    <li>{k}</li>
+                  ))}
+                </ul>
+              </section>
+            )
+          }
+
+          <div class="prose article-body">
+            <Content />
+          </div>
+
+          {
+            vids.length > 0 && (
+              <section aria-labelledby="vids-title" class="block">
+                <h2 id="vids-title">{labels.videos}</h2>
+                <div class="grid grid--2">
+                  {vids.map((v) => (
+                    <VideoCard video={v} />
+                  ))}
+                </div>
+              </section>
+            )
+          }
+
+          <div class="block">
+            <Faq faqs={d.faqs} heading={labels.faq} />
+          </div>
+          <Sources sources={d.sources} />
+          <AuthorBox />
+          {isMedical && <MedicalDisclaimer />}
+        </div>
+
+        <aside class="article-aside">
+          {
+            toc.length > 1 && (
+              <nav class="aside-block" aria-label={labels.toc}>
+                <h2>{labels.toc}</h2>
+                <ul>
+                  {toc.map((h) => (
+                    <li>
+                      <a href={`#${h.slug}`}>{h.text}</a>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            )
+          }
+          {
+            relConditions.length > 0 && (
+              <nav class="aside-block" aria-label="Related conditions">
+                <h2>Condition guides</h2>
+                <ul>
+                  {relConditions.map((c) => (
+                    <li>
+                      <a href={`/dermatology/${c!.id}/`}>{c!.data.navTitle}</a>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            )
+          }
+        </aside>
+      </div>
+    </div>
+  </article>
+
+  {
+    relArticles.length > 0 && (
+      <section class="section section--alt" aria-labelledby="related-title">
+        <div class="container">
+          <h2 id="related-title">{labels.related}</h2>
+          <div class="grid grid--3">
+            {relArticles.map((a) => (
+              <ArticleCard article={a!} />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  {isMedical && <CtaBand />}
+</BaseLayout>
+
+<style>
+  .article-hero {
+    padding-block: clamp(1.5rem, 4vw, 2.5rem) 0;
+  }
+  .category {
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+  }
+  .category a {
+    text-decoration: none;
+  }
+  .category a:hover {
+    text-decoration: underline;
+  }
+  .article-hero h1 {
+    font-size: clamp(1.875rem, 1.5rem + 1.6vw, 2.625rem);
+  }
+  .article-hero .lead {
+    margin-bottom: 1.25rem;
+  }
+  .hero-figure {
+    margin-top: 2rem;
+  }
+  .article-head {
+    max-width: 46rem;
+  }
+  .hero-figure .photo {
+    max-width: 46rem;
+    aspect-ratio: 16 / 9;
+  }
+  .hero-figure .photo :global(img) {
+    object-position: center 25%;
+  }
+  .block {
+    margin-top: 2.5rem;
+  }
+</style>

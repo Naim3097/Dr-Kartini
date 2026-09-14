@@ -1,0 +1,24 @@
+---
+import type { Condition } from '../lib/content';
+interface Props {
+  condition: Condition;
+  headingLevel?: 'h2' | 'h3';
+}
+const { condition, headingLevel = 'h3' } = Astro.props;
+const H = headingLevel;
+const d = condition.data;
+const first = d.summary.split(/(?<=\.)\s/)[0];
+---
+<article class="card card--link">
+  <H><a class="stretched" href={`/dermatology/${condition.id}/`}>{d.navTitle}</a></H>
+  {d.malayName && d.malayName.toLowerCase() !== d.navTitle.toLowerCase() && <p class="card__label">{d.malayName}</p>}
+  <p class="muted desc">{first}</p>
+</article>
+<style>
+  .desc {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>

@@ -1,0 +1,37 @@
+---
+/**
+ * Privacy-friendly, zero-JS-until-click YouTube facade.
+ * Keeps Largest Contentful Paint fast; loads youtube-nocookie only on click.
+ */
+interface Props {
+  id: string;
+  title: string;
+  eager?: boolean;
+}
+const { id, title, eager = false } = Astro.props;
+const thumb = `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
+---
+<button class="lite-yt" type="button" data-yt={id} data-title={title} aria-label={`Play video: ${title}`} style={`background-image:url('${thumb}')`}>
+  <img src={thumb} alt="" width="480" height="360" loading={eager ? 'eager' : 'lazy'} decoding="async" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" />
+  <span class="lite-yt__play" aria-hidden="true"></span>
+</button>
+<noscript><p><a href={`https://www.youtube.com/watch?v=${id}`}>Watch “{title}” on YouTube</a></p></noscript>
+<script>
+  document.querySelectorAll<HTMLButtonElement>('button.lite-yt').forEach((btn) => {
+    btn.addEventListener(
+      'click',
+      () => {
+        const id = btn.dataset.yt;
+        const iframe = document.createElement('iframe');
+        iframe.src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`;
+        iframe.title = btn.dataset.title || 'YouTube video';
+        iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+        iframe.allowFullscreen = true;
+        btn.replaceChildren(iframe);
+        btn.style.cursor = 'default';
+        (window as any).dataLayer?.push({ event: 'video_play', video_id: id, page_path: location.pathname });
+      },
+      { once: true },
+    );
+  });
+</script>
