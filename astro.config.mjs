@@ -5,7 +5,9 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const SITE = 'https://www.drkartini.net';
-const BUILD_DATE = new Date();
+// lastmod for pages without their own date (static pages, video pages).
+// Update this when those pages change meaningfully, so Google keeps trusting lastmod.
+const SITE_LASTMOD = new Date('2026-09-14');
 
 /**
  * Per-URL <lastmod> for the sitemap, read straight from content frontmatter.
@@ -92,7 +94,7 @@ export default defineConfig({
       namespaces: { news: false, xhtml: true, image: true, video: true },
       serialize(item) {
         const url = item.url;
-        const out = { ...item, lastmod: (lastmod.get(url) ?? BUILD_DATE).toISOString() };
+        const out = { ...item, lastmod: (lastmod.get(url) ?? SITE_LASTMOD).toISOString() };
         const video = videos.get(url);
         // @ts-ignore - the underlying `sitemap` library accepts video entries
         if (video) out.video = [video];

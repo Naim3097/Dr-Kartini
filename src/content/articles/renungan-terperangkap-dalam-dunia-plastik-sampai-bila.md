@@ -1,7 +1,7 @@
 ---
 title: "Renungan: Terperangkap dalam Dunia Plastik, Sampai Bila?"
 metaTitle: "Terperangkap dalam Dunia Plastik: Sampai Bila? | Dr Kartini"
-metaDescription: "Surat renungan Dr Kartini Farah Rahim, Naib Presiden PEKA, tentang bahaya plastik kepada kesihatan dan alam sekitar, serta langkah kecil yang boleh kita mulakan."
+metaDescription: "Surat renungan Dr Kartini Farah Rahim, Naib Presiden PEKA, tentang bahaya plastik kepada kesihatan dan alam sekitar, dan langkah kecil untuk bermula."
 summary: "Dalam surat renungan kepada rakyat Malaysia, Dr Kartini Farah Rahim, Naib Presiden PEKA, berkongsi kebimbangan tentang mikroplastik, bahan kimia seperti BPA dan styrene dalam bekas plastik, serta menyeru langkah mudah seperti membawa bekas makanan dan minuman sendiri."
 keyTakeaways:
   - "Minuman panas boleh menguraikan lapisan plastik nipis dalam cawan kertas."

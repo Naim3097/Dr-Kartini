@@ -17,7 +17,9 @@ const { category, list } = Astro.props;
 const cat = articleCategories[category as ArticleCategory];
 const path = `/articles/category/${category}/`;
 const title = `${cat.label} Articles | Dr Kartini Farah Rahim`;
-const description = `${cat.description} Browse ${list.length} article${list.length === 1 ? '' : 's'} in English and Bahasa Malaysia.`.slice(0, 160);
+const langs = [...new Set(list.map((a) => a.data.lang))];
+const langText = langs.length > 1 ? 'in English and Bahasa Malaysia' : langs[0] === 'ms' ? 'in Bahasa Malaysia' : 'in English';
+const description = `${cat.description} ${list.length} article${list.length === 1 ? '' : 's'} ${langText}.`;
 const url = abs(path);
 const schema = graph([
   webPageNode({ url, type: 'CollectionPage', name: title, description }),

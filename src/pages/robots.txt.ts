@@ -36,7 +36,7 @@ export const GET: APIRoute = () => {
     '',
     'User-agent: *',
     'Allow: /',
-    'Disallow: /404/',
+    'Disallow: /404.html',
     '',
     ...aiAndSearchBots.flatMap((bot) => [`User-agent: ${bot}`, 'Allow: /', '']),
     '# Aggressive SEO crawlers: slow down',

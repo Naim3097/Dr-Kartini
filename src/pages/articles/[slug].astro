@@ -81,7 +81,7 @@ const labels = isMalay
   description={d.metaDescription}
   path={path}
   ogImage={ogImage}
-  ogImageAlt={d.heroAlt ?? d.title}
+  ogImageAlt={isMalay ? `${d.title}, oleh Dr Kartini Farah Rahim` : `${d.title}, by Dr Kartini Farah Rahim`}
   ogType="article"
   lang={d.lang}
   schema={schema}
@@ -104,7 +104,7 @@ const labels = isMalay
       </div></div>
       <figure class="container hero-figure">
         <div class="photo">
-          <Image src={hero} alt={d.heroAlt ?? categoryImageAlt[d.category]} widths={[640, 960, 1280]} sizes="(min-width: 800px) 760px, 100vw" loading="eager" fetchpriority="high" />
+          <Image src={hero} alt={d.heroAlt ?? categoryImageAlt[d.category]} widths={[640, 960, 1280]} width={1280} quality={72} sizes="(min-width: 800px) 760px, 100vw" loading="eager" fetchpriority="high" />
         </div>
       </figure>
     </header>

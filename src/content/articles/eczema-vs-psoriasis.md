@@ -181,14 +181,14 @@ Ringkasnya, ekzema biasanya bermula pada bayi dan kanak-kanak, sangat gatal, dan
 
 Treatment is always tailored to severity, age, the areas affected and your preferences, but the approaches differ.
 
-**Eczema** ([read more](/dermatology/eczema/)):
+**Eczema** ([eczema guide](/dermatology/eczema/)):
 
 - Emollients are the mainstay at every stage, from mild to severe, and are used even when the skin looks clear.
 - Topical corticosteroids are used alongside emollients to treat flares and, once a flare has settled, may be used intermittently on previously affected areas to help maintain control.
 - Non-steroid anti-inflammatory creams, wet wrap therapy, and treatment of infection are used where appropriate.
 - Severe eczema may need phototherapy, systemic immunosuppressant medicines or newer targeted treatments.
 
-**Psoriasis** ([read more](/dermatology/psoriasis/)):
+**Psoriasis** ([psoriasis guide](/dermatology/psoriasis/)):
 
 - Regular emollients, with topical corticosteroids, vitamin D analogues or tar-based preparations for mild to moderate disease.
 - Phototherapy when creams are not enough.

@@ -17,8 +17,8 @@ It replaces the Wix site at `https://www.drkartini.net` on the same domain, with
 npm ci               # install exact versions from package-lock.json
 npm run dev          # local dev server at http://localhost:4321
 npm run build        # production build to dist/
-npm run audit        # SEO audit of dist/ (titles, descriptions, canonicals, H1s, alt text, JSON-LD, links, sitemap)
-npm run build:audit  # build, then audit (should report 0 issues)
+npm run audit        # SEO, social preview and page-weight audit of dist/
+npm run build:audit  # build, then audit (must report 0 errors)
 npm run preview      # serve dist/ locally
 npm run icons        # regenerate PNG and ICO icons from public/favicon.svg
 ```
@@ -136,11 +136,15 @@ Run `npm run build:audit`, commit and push. Vercel deploys automatically. The ar
 
 `draft: true` hides a file from production builds. It still appears in `npm run dev`.
 
+When you change a static page (for example About or Appointments) in a meaningful way, also update `SITE_LASTMOD` in `astro.config.mjs`. The sitemap uses it as the last-modified date for pages that have no date of their own.
+
 ---
 
 ## What is built in
 
 ### Technical SEO
+- Lighthouse (mobile, 14 September 2026): Performance 99 to 100, SEO 100, Accessibility 100, Best Practices 100 on the home, About, condition, article, animal welfare, media, appointments, contact and video pages.
+- `npm run audit` checks titles, descriptions, canonicals, robots, hreflang, headings, favicons and manifest icons, Open Graph and Twitter tags, social image size (1200x630, under 300 KB for WhatsApp), image alt text and dimensions, broken links, redirect targets, rich result fields in JSON-LD, sitemap coverage and page weight.
 - A unique title and description on every page. The audit enforces length limits and flags duplicates.
 - Canonical URLs, consistent trailing slashes, `hreflang` (en-MY and ms-MY) with `x-default`, and correct `lang` attributes on Malay articles.
 - XML sitemap with per-URL `lastmod`, plus video sitemap entries for all 19 video pages.

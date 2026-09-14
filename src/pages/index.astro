@@ -86,7 +86,7 @@ const community = [
   },
 ];
 ---
-<BaseLayout title={meta.title} description={meta.description} path="/" ogImage="/og/page/home.jpg" schema={schema} ogType="profile">
+<BaseLayout title={meta.title} description={meta.description} path="/" ogImage="/og/page/home.jpg" schema={schema}>
   <section class="hero">
     <div class="container hero__grid">
       <div class="hero__text">
@@ -105,9 +105,9 @@ const community = [
       <div class="photo photo--portrait hero__photo">
         <Picture
           src={heroImg}
-          formats={['avif', 'webp']}
+          formats={['avif', 'webp']} fallbackFormat="webp"
           alt="Dr Kartini Farah Rahim, Consultant Dermatologist, at her desk"
-          widths={[420, 640, 864]}
+          widths={[420, 640, 864]} width={864}
           sizes="(min-width: 900px) 420px, 90vw"
           loading="eager"
           fetchpriority="high"
@@ -135,7 +135,7 @@ const community = [
         <p><a class="text-link" href="/about-dr-kartini/">Read more about Dr Kartini</a></p>
       </div>
       <div class="photo photo--portrait about__photo">
-        <Image src={kurungImg} alt="Dr Kartini Farah Rahim in a blue baju kurung with a stethoscope" widths={[400, 640]} sizes="(min-width: 900px) 380px, 90vw" />
+        <Image src={kurungImg} alt="Dr Kartini Farah Rahim in a blue baju kurung with a stethoscope" widths={[400, 640]} width={640} sizes="(min-width: 900px) 380px, 90vw" />
       </div>
     </div>
   </section>
