@@ -4,7 +4,7 @@ import sitemap from '@astrojs/sitemap';
 import fs from 'node:fs';
 import path from 'node:path';
 
-const SITE = 'https://www.drkartini.net';
+const SITE = 'https://www.expertdermatologist.com';
 // lastmod for pages without their own date (static pages, video pages).
 // Update this when those pages change meaningfully, so Google keeps trusting lastmod.
 const SITE_LASTMOD = new Date('2026-09-14');

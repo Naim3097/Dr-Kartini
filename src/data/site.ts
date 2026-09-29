@@ -4,11 +4,11 @@
  * Update facts HERE, never inline in pages, so search engines and AI systems
  * always see one consistent entity.
  *
- * Sources: drkartini.net (crawled 14 Sep 2026) and Avisena specialist profiles
+ * Sources: Dr Kartini's previous Wix website (crawled 14 Sep 2026) and Avisena specialist profiles
  * (ash.avisena.com.my and awcsh.avisena.com.my, checked 14 Sep 2026).
  */
 
-export const SITE_URL = 'https://www.drkartini.net';
+export const SITE_URL = 'https://www.expertdermatologist.com';
 export const SITE_NAME = 'Dr Kartini Farah Rahim';
 export const LOCALE = 'en_MY';
 export const LANG = 'en-MY';

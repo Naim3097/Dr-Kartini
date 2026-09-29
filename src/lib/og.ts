@@ -81,7 +81,7 @@ export async function renderOg({
                   style: { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', paddingTop: 22, borderTop: `1px solid ${BORDER}`, fontSize: 24, color: TEXT_2 },
                   children: [
                     { type: 'div', props: { style: { display: 'flex', maxWidth: 500 }, children: eyebrow } },
-                    { type: 'div', props: { style: { fontWeight: 600, color: TEXT }, children: 'drkartini.net' } },
+                    { type: 'div', props: { style: { fontWeight: 600, color: TEXT }, children: 'expertdermatologist.com' } },
                   ],
                 },
               },

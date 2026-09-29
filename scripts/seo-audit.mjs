@@ -9,7 +9,7 @@ import path from 'node:path';
 import sharp from 'sharp';
 
 const DIST = path.resolve('dist');
-const SITE = 'https://www.drkartini.net';
+const SITE = 'https://www.expertdermatologist.com';
 const files = [];
 (function walk(d) {
   for (const f of fs.readdirSync(d)) {
@@ -258,7 +258,7 @@ for (const file of files) {
     }
     if ((typesOnPage.get('FAQPage') || 0) > 1) error(rel, 'more than one FAQPage node');
     const text = b[1];
-    for (const ref of text.matchAll(/"@id":"(https:\/\/www\.drkartini\.net[^"]*#[^"]+)"/g)) {
+    for (const ref of text.matchAll(new RegExp(`"@id":"(${SITE.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&')}[^"]*#[^"]+)"`, 'g'))) {
       if (!idsSeen.has(ref[1]) && !/#(condition|personimage|primaryimage)$/.test(ref[1]) && !ref[1].includes('/dermatology/')) {
         error(rel, `unresolved @id reference: ${ref[1]}`);
       }

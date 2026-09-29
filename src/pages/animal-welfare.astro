@@ -26,7 +26,7 @@ const url = abs(meta.path);
 const articles = (await getArticles()).filter((a) => a.data.category === 'animal-welfare' || (a.data.category === 'press-statements' && a.data.tags.some((t) => /haiwan|animal/i.test(t))));
 const animalVideos = videos.filter((v) => v.category === 'animal-welfare');
 const animalClips = clippings.filter((c) => c.topic === 'animal-welfare');
-const adoptHref = `${contact.whatsappLink}?text=${encodeURIComponent('Hello Dr Kartini, I am interested in adopting a rescued animal. (Sent from drkartini.net/animal-welfare/)')}`;
+const adoptHref = `${contact.whatsappLink}?text=${encodeURIComponent('Hello Dr Kartini, I am interested in adopting a rescued animal. (Sent from expertdermatologist.com/animal-welfare/)')}`;
 
 const milestones = [
   { date: '13 Mar 2024', title: 'Letter in The Star: “Lift the ban on feeding of strays”', text: 'Writing as an F3 board member, she asked a local council to reverse a ban on feeding stray animals and pointed to neutering and vaccination instead.' },

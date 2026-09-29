@@ -1,8 +1,8 @@
-# DrKartini.net
+# expertdermatologist.com
 
 The official website of **Dr Kartini Farah Rahim, Consultant Dermatologist**, Shah Alam, Malaysia.
 
-It replaces the Wix site at `https://www.drkartini.net` on the same domain, with 301 redirects from every old URL.
+It is served at `https://www.expertdermatologist.com`. The redirects in `vercel.json` send old Wix page addresses (such as `/profession`) to their new pages.
 
 - **Stack:** Astro 7, static HTML with almost no JavaScript, Markdown content collections, sharp image pipeline
 - **Output:** `dist/`, plain static files
@@ -49,13 +49,11 @@ npm run icons        # regenerate PNG and ICO icons from public/favicon.svg
 
 The build downloads Source Sans 3 from Google Fonts and self-hosts it, so the build machine needs internet access (Vercel has it).
 
-### Moving the domain from Wix
+### Connecting the domain
 
-1. Add `www.drkartini.net` and `drkartini.net` under Project Settings > Domains, with the apex redirecting to `www`.
+1. Add `www.expertdermatologist.com` and `expertdermatologist.com` under Project Settings > Domains, with the apex redirecting to `www`.
 2. Update DNS at the domain registrar as Vercel instructs.
-3. Keep the Wix plan until DNS has propagated and the new site is live.
-4. Test a few old URLs, such as `/profession`, `/clinic-hours` and `/post/mochi-is-for-adoption`. Each should return a 301 to its new page.
-5. Submit `https://www.drkartini.net/sitemap-index.xml` in Google Search Console and Bing Webmaster Tools.
+3. Submit `https://www.expertdermatologist.com/sitemap-index.xml` in Google Search Console and Bing Webmaster Tools.
 
 ---
 

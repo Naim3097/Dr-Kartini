@@ -149,17 +149,17 @@ export const pages = {
   },
   editorial: {
     path: '/editorial-policy/',
-    title: 'Editorial & Medical Review Policy | DrKartini.net',
+    title: 'Editorial & Medical Review Policy | Dr Kartini Farah Rahim',
     description:
-      'How medical content on DrKartini.net is written, reviewed by Consultant Dermatologist Dr Kartini Farah Rahim, sourced, updated and kept independent.',
+      'How medical content on this website is written, reviewed by Consultant Dermatologist Dr Kartini Farah Rahim, sourced, updated and kept independent.',
     og: { title: 'Editorial & Medical Review Policy' },
     llms: 'How content is written, medically reviewed, sourced and corrected.',
   },
   privacy: {
     path: '/privacy-policy/',
-    title: 'Privacy Policy | DrKartini.net',
+    title: 'Privacy Policy | Dr Kartini Farah Rahim',
     description:
-      'How DrKartini.net handles personal data from enquiries, WhatsApp messages and website analytics, in line with Malaysia’s Personal Data Protection Act 2010.',
+      'How this website handles personal data from enquiries, WhatsApp messages and website analytics, in line with Malaysia’s Personal Data Protection Act 2010.',
     og: { title: 'Privacy Policy' },
   },
 } satisfies Record<string, PageMeta>;

@@ -31,7 +31,7 @@ const aiAndSearchBots = [
 
 export const GET: APIRoute = () => {
   const body = [
-    '# robots.txt for drkartini.net',
+    '# robots.txt for expertdermatologist.com',
     '# Search engines and AI assistants are welcome to crawl and cite this site.',
     '',
     'User-agent: *',

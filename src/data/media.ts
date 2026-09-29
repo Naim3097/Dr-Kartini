@@ -1,6 +1,6 @@
 /**
  * Media coverage. Headlines, outlets and dates are transcribed from the
- * clippings published on the previous drkartini.net. Where the headline is not
+ * clippings published on Dr Kartini's previous Wix website. Where the headline is not
  * visible on the clipping, `isHeadline` is false and `title` is a description.
  * Never invent an outlet or date. Add the online article `url` whenever one is
  * found: those links become citations in structured data, which helps AI

@@ -150,7 +150,7 @@ const schema = graph([
       }
     }
     // No form backend configured: hand the enquiry to WhatsApp with the attribution answer included.
-    const text = `Hello Dr Kartini,\n\nName: ${data.get('name')}\nEnquiry: ${data.get('type')}\nHeard about Dr Kartini via: ${data.get('source')}\n\n${data.get('message')}\n\n(Sent from drkartini.net/contact/)`;
+    const text = `Hello Dr Kartini,\n\nName: ${data.get('name')}\nEnquiry: ${data.get('type')}\nHeard about Dr Kartini via: ${data.get('source')}\n\n${data.get('message')}\n\n(Sent from expertdermatologist.com/contact/)`;
     window.open(`https://wa.me/601126166480?text=${encodeURIComponent(text)}`, '_blank', 'noopener');
   });
 </script>

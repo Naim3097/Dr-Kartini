@@ -192,7 +192,7 @@ export function websiteNode(): Json {
     '@id': ids.website,
     url: `${SITE_URL}/`,
     name: SITE_NAME,
-    alternateName: ['DrKartini.net', 'Dr Kartini'],
+    alternateName: ['expertdermatologist.com', 'Dr Kartini'],
     description: `${person.tagline} Official website of ${person.name}.`,
     inLanguage: LANG,
     publisher: { '@id': ids.person },
