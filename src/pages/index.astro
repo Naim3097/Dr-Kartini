@@ -5,11 +5,13 @@ import ConditionCard from '../components/ConditionCard.astro';
 import ArticleCard from '../components/ArticleCard.astro';
 import VideoEmbed from '../components/VideoEmbed.astro';
 import Faq from '../components/Faq.astro';
+import Reviews from '../components/Reviews.astro';
 import { pages } from '../data/pages';
 import { hospitals, registrations, contact, postNominals } from '../data/site';
 import { getConditions, getArticles, videos } from '../lib/content';
 import { graph, webPageNode, faqNode, abs, ids } from '../lib/schema';
 import { whatsappHref } from '../lib/whatsapp';
+import { focusStyle } from '../lib/focus';
 
 import heroImg from '../assets/images/portraits/dr-kartini-farah-rahim-dermatologist-shah-alam.jpg';
 import kurungImg from '../assets/images/portraits/dr-kartini-farah-rahim-baju-kurung-stethoscope.jpg';
@@ -153,6 +155,8 @@ const community = [
     </div>
   </section>
 
+  <Reviews more={{ href: '/dermatology/eczema/', text: 'Read the eczema guide' }} />
+
   <section class="section section--alt" aria-labelledby="clinics-title">
     <div class="container">
       <div class="section-head">
@@ -205,7 +209,7 @@ const community = [
           community.map((c) => (
             <article class="card card--link">
               <div class="card__media">
-                <Image src={c.img} alt={c.alt} width={640} height={400} fit="cover" />
+                <Image src={c.img} alt={c.alt} width={640} style={focusStyle(c.img)} />
               </div>
               <h3>
                 <a class="stretched" href={c.href}>{c.title}</a>

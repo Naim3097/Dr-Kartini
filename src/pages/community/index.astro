@@ -5,6 +5,7 @@ import Faq from '../../components/Faq.astro';
 import { pages } from '../../data/pages';
 import { affiliations } from '../../data/site';
 import { graph, webPageNode, faqNode, abs, ids } from '../../lib/schema';
+import { focusStyle } from '../../lib/focus';
 
 import speakImg from '../../assets/images/media/dr-kartini-speaking-at-health-event.jpg';
 import catImg from '../../assets/images/animal-welfare/dr-kartini-animal-rescuer-with-cat.jpg';
@@ -60,7 +61,7 @@ const areas = [
         areas.map((a) => (
           <article class="card card--link">
             <div class="card__media">
-              <Image src={a.img} alt={a.alt} width={720} height={450} fit="cover" />
+              <Image src={a.img} alt={a.alt} width={720} style={focusStyle(a.img)} />
             </div>
             <h2 class="card-title">
               <a class="stretched" href={a.href}>{a.title}</a>

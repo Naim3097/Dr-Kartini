@@ -65,6 +65,7 @@ The build downloads Source Sans 3 from Google Fonts and self-hosts it, so the bu
 | Page titles, meta descriptions and social card text for static pages | `src/data/pages.ts` |
 | Press clippings and TV appearances | `src/data/media.ts` |
 | Video library (YouTube IDs, titles, descriptions, dates) | `src/data/videos.json` |
+| Parents' Threads posts, embedded on the homepage and eczema guides | `src/data/reviews.ts` |
 | Condition guides, one file each, at `/dermatology/<file>/` | `src/content/conditions/*.md` |
 | Articles, one file each, at `/articles/<file>/` | `src/content/articles/*.md` |
 | Structured data (JSON-LD) builders | `src/lib/schema.ts` |
@@ -170,7 +171,8 @@ When you change a static page (for example About or Appointments) in a meaningfu
 - Pre-filled WhatsApp messages include the page they were sent from.
 
 ### Compliance
-- Content follows Malaysian Medical Council guidance on information for the public: no superlatives, testimonials, before-and-after photos or prices.
+- The site's own content follows Malaysian Medical Council guidance on information for the public: no superlatives, before-and-after photos or prices.
+- The parents' Threads posts on the homepage and eczema guides are embedded as the parents published them, with Dr Kartini's approval and the parents' agreement.
 - Medical disclaimers and emergency guidance on medical pages, an editorial policy, and a privacy policy (PDPA 2010).
 
 Medical content must be reviewed and approved by Dr Kartini before the site goes live on the main domain.

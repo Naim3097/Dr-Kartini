@@ -1,6 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import { categoryImage, categoryImageAlt, categoryLabel, type Article } from '../lib/content';
+import { focusStyle } from '../lib/focus';
 interface Props {
   article: Article;
   headingLevel?: 'h2' | 'h3';
@@ -17,7 +18,7 @@ const date = d.datePublished.toLocaleDateString('en-MY', { day: 'numeric', month
   {
     showImage && (
       <div class="card__media">
-        <Image src={img} alt={d.heroAlt ?? categoryImageAlt[d.category]} width={640} height={400} fit="cover" loading={eager ? 'eager' : 'lazy'} />
+        <Image src={img} alt={d.heroAlt ?? categoryImageAlt[d.category]} width={640} style={focusStyle(img)} loading={eager ? 'eager' : 'lazy'} />
       </div>
     )
   }

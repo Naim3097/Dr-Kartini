@@ -6,6 +6,7 @@ import gasing from '../assets/images/environment/save-bukit-gasing-community-adv
 import speaking from '../assets/images/media/dr-kartini-speaking-at-health-event.jpg';
 import portrait from '../assets/images/portraits/dr-kartini-farah-rahim-black-blazer.jpg';
 import { articleCategories, type ArticleCategory } from '../data/site';
+import { reviews, type Review } from '../data/reviews';
 import videosJson from '../data/videos.json';
 
 export type Video = (typeof videosJson)[number];
@@ -61,6 +62,10 @@ export const isoDate = (d: Date) => d.toISOString().slice(0, 10);
 
 export function videosFor(ids: string[]) {
   return ids.map((id) => videos.find((v) => v.id === id)).filter(Boolean) as Video[];
+}
+
+export function reviewsFor(topic?: string): Review[] {
+  return reviews.filter((r) => !topic || r.topics.includes(topic)).sort((a, b) => b.date.localeCompare(a.date));
 }
 
 export type Article = CollectionEntry<'articles'>;

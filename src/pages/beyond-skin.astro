@@ -3,6 +3,7 @@ import { Image } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { pages } from '../data/pages';
 import { graph, webPageNode, articleNode, abs, ids } from '../lib/schema';
+import { focusStyle } from '../lib/focus';
 
 import kurungImg from '../assets/images/portraits/dr-kartini-farah-rahim-baju-kurung-stethoscope.jpg';
 import wrapImg from '../assets/images/clinical/childrens-skin-care-dr-kartini.jpg';
@@ -84,7 +85,7 @@ const schema = graph([
           on television and in print.
         </p>
         <figure>
-          <Image src={wrapImg} alt="Dr Kartini applying wet wraps to a young child with eczema" widths={[480, 870]} width={870} sizes="(min-width: 820px) 480px, 90vw" class="story-portrait" />
+          <Image src={wrapImg} alt="Dr Kartini applying wet wraps to a young child with eczema" widths={[480, 870]} width={870} sizes="(min-width: 820px) 480px, 90vw" class="story-portrait" style={focusStyle(wrapImg)} />
           <figcaption>Wet wrap treatment for a young child with eczema. The child’s face has been blurred.</figcaption>
         </figure>
 

@@ -13,6 +13,7 @@ import ArticleCard from '../../components/ArticleCard.astro';
 import { getArticles, getConditions, videosFor, readingMinutes, isoDate, categoryImage, categoryImageAlt, categoryLabel } from '../../lib/content';
 import { graph, webPageNode, articleNode, faqNode, abs } from '../../lib/schema';
 import { articleCategories } from '../../data/site';
+import { focusStyle } from '../../lib/focus';
 
 export async function getStaticPaths() {
   const articles = await getArticles();
@@ -104,7 +105,7 @@ const labels = isMalay
       </div></div>
       <figure class="container hero-figure">
         <div class="photo">
-          <Image src={hero} alt={d.heroAlt ?? categoryImageAlt[d.category]} widths={[640, 960, 1280]} width={1280} quality={72} sizes="(min-width: 800px) 760px, 100vw" loading="eager" fetchpriority="high" />
+          <Image src={hero} alt={d.heroAlt ?? categoryImageAlt[d.category]} widths={[640, 960, 1280]} width={1280} quality={72} sizes="(min-width: 800px) 760px, 100vw" loading="eager" fetchpriority="high" style={focusStyle(hero)} />
         </div>
       </figure>
     </header>

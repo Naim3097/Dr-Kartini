@@ -10,6 +10,7 @@ import MedicalDisclaimer from '../../components/MedicalDisclaimer.astro';
 import CtaBand from '../../components/CtaBand.astro';
 import VideoCard from '../../components/VideoCard.astro';
 import ArticleCard from '../../components/ArticleCard.astro';
+import Reviews from '../../components/Reviews.astro';
 import { getConditions, getArticles, videosFor, readingMinutes, isoDate } from '../../lib/content';
 import { graph, webPageNode, medicalConditionNode, faqNode, abs } from '../../lib/schema';
 import { whatsappHref } from '../../lib/whatsapp';
@@ -191,6 +192,8 @@ const schema = graph([
       </section>
     )
   }
+
+  <Reviews topic={condition.id} />
 
   <CtaBand topic={topic} />
 </BaseLayout>
